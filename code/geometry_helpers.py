@@ -1,6 +1,6 @@
 from itertools import product
 import numpy as np
-import code.geometry_helpers as gh
+
 
 
 def r_ypr(alpha, beta, gamma):
@@ -44,6 +44,8 @@ def phi_def(x, y):
 def dist_2d(x1, y1, x2, y2):
     return np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
+def norm(a):
+    return np.sqrt(np.sum(a ** 2))
 
 def loc_sub_con_coord(sub_con_seg, detect_point):
     """Takes in and out nodes of a sub connection and calculates cylinder
@@ -96,27 +98,27 @@ def damage_sort_line(r_node, rd_o, rd_i, phi_e, phi_i, phi_s, segment_list,
                 node_list, ns, ne, w, h, nhinc, nwinc, sigma, sigma_damage, name):
 
     if phi_e > phi_i > phi_s and rd_i < r_node < rd_o :
-        gh.cuboid(segment_list, node_list, ns, ne, w, h, nhinc,
+        cuboid(segment_list, node_list, ns, ne, w, h, nhinc,
                   nwinc, sigma_damage, name)  # defines the cuboids and appends them to list
     elif phi_s > phi_e > phi_i >= 0 and rd_i < r_node < rd_o :
-        gh.cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
+        cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
     elif phi_e < phi_s < phi_i < 2 * np.pi and rd_i < r_node < rd_o :
-        gh.cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
+        cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
     else:
-        gh.cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma, name)
+        cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma, name)
 
 def damage_sort_patch(r_node, rd_o, rd_i, sub_ind, phi_e, phi_i, phi_s, segment_list,
                 node_list, ns, ne, w, h, nhinc, nwinc, sigma, sigma_damage, name):
 
     if phi_e > phi_i > phi_s and rd_i < r_node < rd_o and sub_ind == 1:
-        gh.cuboid(segment_list, node_list, ns, ne, w, h, nhinc,
+        cuboid(segment_list, node_list, ns, ne, w, h, nhinc,
                   nwinc, sigma_damage, name)  # defines the cuboids and appends them to list
     elif phi_s > phi_e > phi_i >= 0 and rd_i < r_node < rd_o and sub_ind == 1:
-        gh.cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
+        cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
     elif phi_e < phi_s < phi_i < 2 * np.pi and rd_i < r_node < rd_o and sub_ind == 1:
-        gh.cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
+        cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
     else:
-        gh.cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma, name)
+        cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma, name)
 
 # loops
 
@@ -149,6 +151,22 @@ def loop_corners(loop):
     q4 = p + np.matmul(r_mat, p4)
     return q1, q2, q3, q4
 
+def det_loop_corners(loop):
+    """returns the node points of a detector loop
+    """
+    p, wl, hl, alpha, beta, gamma, sigma_l, wf, hf, nhinc_f, nwinc_f = loop
+    p1 = np.array([hl / 2, -wl / 2, 0])
+    p2 = np.array([hl / 2, wl / 2, 0])
+    p3 = np.array([-hl / 2, wl / 2, 0])
+    p4 = np.array([-hl / 2, -wl / 2, 0])
+    p5 = np.array([0.999 * hl / 2,   -wl / 2, 0])
+    r_mat = r_ypr(alpha, beta, gamma)  # rotation matrix
+    q1 = p + np.matmul(r_mat, p1)  # rotate the initial points
+    q2 = p + np.matmul(r_mat, p2)
+    q3 = p + np.matmul(r_mat, p3)
+    q4 = p + np.matmul(r_mat, p4)
+    q5 = p + np.matmul(r_mat, p5)
+    return q1, q2, q3, q4, q5
 
 # dyn_mesh specific code
 

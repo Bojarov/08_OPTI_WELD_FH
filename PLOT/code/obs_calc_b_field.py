@@ -76,10 +76,10 @@ def b_point_calc(a_cross_re_z, a_cross_im_z, params):
     dy_az_tot = \
         (az_tot_xy[1, 2] - az_tot_xy[1, 0]) / (2 * h)
 
-    b_mag = np.sqrt(dx_az_tot ** 2 + dy_az_tot ** 2)
+    b_vec = np.array([dy_az_tot, -dx_az_tot, 0]) #np.sqrt(dx_az_tot ** 2 + dy_az_tot ** 2)
     # for now only B field magnitude is of interest
     # needs to change when symmetry is lower then cylindrical
-    return b_mag
+    return b_vec
 
 
 def b_at_detector(params, damage_params, filament_params, output_params, r_sub_vec, node_dens_vec, l_sub_vec,
@@ -110,7 +110,11 @@ def b_at_detector(params, damage_params, filament_params, output_params, r_sub_v
     xyz0_proj_im = j_dens_cuts[5]
 
     i_fh = ocj.i_fh_calc_dyn(tube_segment_lists, l_sub_vec, xyz0_proj_re, xyz0_proj_im)
-    #print("i_fh ", i_fh)
+    print(i_fh)
+    print(i_fh)
+    print(i_fh)
+    print(i_fh)
+
     a_dpts_cross_xyz_re_z, a_dpts_cross_xyz_im_z = oca.A_int_dyn(
         j_tube_re, j_tube_im, r_sub_vec, l_sub_vec, node_dens_vec,
         params, output_params, tube_segment_lists, loop_list)

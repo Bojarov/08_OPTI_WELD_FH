@@ -18,7 +18,7 @@ pipe_thickness = 0.0065
 # pipe_thickness = 0.1
 Ri = 0.0001  # inner radius
 Ri = Ro - pipe_thickness
-flen = 100 * Ro  # length of wire/pipe
+flen = 20  # length of wire/pipe
 z0 = 0.0  # start of tube on z axis
 node_dens = 80  # number of nodes on radius
 

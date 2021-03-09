@@ -56,11 +56,11 @@ def A_ker_pre_point_calc(x1, y1, z1, tube_segment_lists, params):
     # create cross (5) for each spatial dimension (3) in which A field from each
     # of the (N_fil) filaments are calculated
     a_ker_mat = np.zeros((5, 3, n_seg))
-    #print("a_ker_mat does not need to have 3 spatial dimensions!")
+    # print("a_ker_mat does not need to have 3 spatial dimensions!")
     # i define it so that additional spatial dimensions can be included, for npw only z
 
-    #print("CAUTION in obs_calc, when defined shell has no segments -> error in loop through segment_list")
-    #print("CAUTION in obs_calc, overthink the h definition")
+    # print("CAUTION in obs_calc, when defined shell has no segments -> error in loop through segment_list")
+    # print("CAUTION in obs_calc, overthink the h definition")
     for i in range(len(cross_xy)):
         a_ker_vec = []
         point = cross_xy[i]
@@ -121,7 +121,7 @@ def A_int_dyn(j_tube_re, j_tube_im, r_sub_vec, l_sub_vec, node_dens_vec, params,
     
     uses precalculated geometry if setup already exists
     """
-    #print("CAUTION: only z directed currents possible in obs_calc.A_int_dyn !")
+    # print("CAUTION: only z directed currents possible in obs_calc.A_int_dyn !")
     ro_t, ri_t, flen, node_dens, sigma, mu_0, mu_r, freq = params  # unpack
     z0, w_detect, h_detect, _ = output_params
 

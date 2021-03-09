@@ -2,8 +2,6 @@ import numpy as np
 import code.geometry_helpers as gh
 
 
-# from itertools import product
-
 # dyn specific code
 
 def node_points_filaments_dyn(ro, ri, params, damage_params, filament_params,
@@ -21,7 +19,7 @@ def node_points_filaments_dyn(ro, ri, params, damage_params, filament_params,
     del_phi_weld = d_weld / Ro
     phi_s = (phi_c_weld - 0.5 * del_phi_weld) % (2 * np.pi)
     phi_e = (phi_c_weld + 0.5 * del_phi_weld) % (2 * np.pi)
-    
+
     # if we are in one of the surface rings
     if ro == Ro or ri == Ri:
         # CAUTION: THIS CODE IS NOT GENERAL, for now only one inner ring works ok
@@ -56,7 +54,7 @@ def node_points_filaments_dyn(ro, ri, params, damage_params, filament_params,
                                         Ne, w, h, nhinc, nwinc, sigma, sigma_damage, name)
                 else:
                     gh.damage_sort_patch(r_node, rd_o, rd_i, sub_ind, phi_e, phi_i, phi_s, segment_list, node_list, Ns,
-                                        Ne, w, h, nhinc, nwinc, sigma, sigma_damage, name)
+                                         Ne, w, h, nhinc, nwinc, sigma, sigma_damage, name)
     # if we are in the inner ring
     else:
         pts_lists = gh.ring_cover_classify(Ro, r_sub_vec, node_dens_vec)
@@ -88,13 +86,13 @@ def node_points_filaments_dyn(ro, ri, params, damage_params, filament_params,
 
                     phi_i = gh.phi_def(x, y)
 
-
                     if l_weld == flen:
                         gh.damage_sort_line(r_node, rd_o, rd_i, phi_e, phi_i, phi_s, segment_list, node_list, Ns,
-                                        Ne, w, h, nhinc, nwinc, sigma, sigma_damage, name)
+                                            Ne, w, h, nhinc, nwinc, sigma, sigma_damage, name)
                     else:
-                        gh.damage_sort_patch(r_node, rd_o, rd_i, sub_ind, phi_e, phi_i, phi_s, segment_list, node_list, Ns,
-                                        Ne, w, h, nhinc, nwinc, sigma, sigma_damage, name)
+                        gh.damage_sort_patch(r_node, rd_o, rd_i, sub_ind, phi_e, phi_i, phi_s, segment_list, node_list,
+                                             Ns,
+                                             Ne, w, h, nhinc, nwinc, sigma, sigma_damage, name)
                 fil_ind = fil_ind + 1
 
         pts = all_pts
@@ -170,7 +168,7 @@ def sub_connection(s1, s2, phi_con, l_sub_vec, r_sub_vec, sub_con_list,
 
             min_dist_ind_s = np.argmin(dist_shell_s)
             min_dist_ind_e = np.argmin(dist_shell_e)
-#f_v = [0.001, 1, 4, 16, 64, 100]
+            # f_v = [0.001, 1, 4, 16, 64, 100]
 
             connection_candidates_s. \
                 append([dist_shell_s[min_dist_ind_s],
@@ -203,3 +201,41 @@ def sub_connection(s1, s2, phi_con, l_sub_vec, r_sub_vec, sub_con_list,
 
     gh.cuboid(sub_con_list, sub_con_node_list, Ns, Ne, ws, hs, nhinc_s, nwinc_s, sigma_s,
               name)  # create the subcon segment
+
+# ZC code
+def detector_builder(det_pos, i_xyz, w_l, h_l, loop_fil_params, loop_list):
+    # if i_xyz == 0:
+    alpha, beta, gamma = np.array([0, np.pi / 2, 0])
+    if i_xyz == 1:
+        alpha, beta, gamma = np.array([0, 0, np.pi / 2])
+    elif i_xyz == 2:
+        alpha, beta, gamma = np.zeros(3)
+
+    wf, hf, nhinc_f, nwinc_f, sigma_l = loop_fil_params
+    n_det, _ = np.shape(det_pos)
+
+    for i in range(n_det):
+        p = det_pos[i, :]
+        loop_list.append([p, w_l, h_l, alpha, beta, gamma, sigma_l, wf, hf, nhinc_f, nwinc_f])
+
+
+def wire_builder(p1, p2, w_wire, h_wire, phys_params, fil_params, wire_list, external = False):
+    sigma, mu_0, mu_r, freq = phys_params
+    nhinc, nwinc, _ = fil_params
+    name = {"Node_1": None, "Node_2": None, "Segment": None, "external": external}
+    wire_list.append([p1, p2, w_wire, h_wire, nhinc, nwinc, sigma, name])
+
+
+def plane_builder(p1, p2, p3, thick, m_grid, plane_list):
+    # TODO define the plane similar to the loops via center and angles!
+    """defines a plane made of segments,
+    P1, P2, P3 are the three corners of the plane
+    m_grid is the amount of filaments forming the P1-P2 edge
+    we use the same amount along the P2-P3 edge
+    the two lines must be in a right angle!
+    thick is the thickness of the segments and thus the plane thickness
+    """
+    if m_grid >= 2:
+        plane_list.append([p1, p2, p3, thick, m_grid])
+    else:
+        print("Invalid plane grid, increase number of segments to m_grid>=2.")

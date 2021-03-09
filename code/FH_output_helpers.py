@@ -169,7 +169,7 @@ def j_dens_extract(r_sub_vec, l_sub_vec, node_dens_vec, params, damage_params,
         os.makedirs('FH_output_files/current_densities')
 
     if os.path.exists('./Jreal1_0.mat') and \
-            os.path.exists('./Jimag1_0.mat'):
+       os.path.exists('./Jimag1_0.mat'):
         print("Extracting current density at desired points")
 
         # prepare the real part of the current density

@@ -128,19 +128,26 @@ freq_vec_a = np.logspace(0, 3, base=10, num=20)
 
 
 def main():
-    phi_cv = [0.0]  # , np.pi/4, np.pi/2]
+    # phi_cv = [0.0]  # , np.pi/4, np.pi/2]
     # phi_cv = [np.pi/4]#, np.pi/2]
     # phi_cv = [np.pi / 2]
-    # phi_cv = [0.0, np.pi/4, np.pi/2]
+    # phi_cv = [0.0, np.pi]
+    phi_cv = [0.0, np.pi/4, np.pi/2, 3/4*np.pi, np.pi]
     dw_v = [0.02]
     lw_v = [flen]
+    xd_v = [-0.5, -0.16667, 0, 0.16667, 0.5]
+    # xd_v = [-0.5]
+    # xd_v = [-0.16667]
+    # xd_v = [0.0]
+    # xd_v = [0.16667]
+    # xd_v = [0.5]
 
-    xd_v = [-1.0, -0.75, -0.5, -0.4, -0.2, -0.1, 0.0, 0.1, 0.2, 0.4, 0.5, 0.75, 1.0]
-    #xd_v = [-0.5, -0.16667, 0.16667, 0.5]
     yd_v = [2.0]
+
     zd_v = [flen / 2]
-    # f_v = [10**0, 10**1, ]
-    f_v = [3,12]
+
+    #f_v = [2, 4, 8, 16, 32, 64, 128]
+    f_v = [3, 6, 12, 24, 48, 96]
 
     # f_v = [10**0, 100]
     thick = Ro - Ri
@@ -150,7 +157,7 @@ def main():
     # op.b_at_det_iter( phi_cv, dw_v, rdi_v, rdo_v, lw_v, xd_v, yd_v, zd_v, f_v,
     #    params, damage_params, output_params, filament_params, node_dens_vec, r_sub_vec)
 
-    op.b_at_det_plot_f2(phi_cv, dw_v, rdi_v, rdo_v, lw_v, xd_v, yd_v, zd_v, f_v,
+    op.b_at_det_plot_f9(phi_cv, dw_v, rdi_v, rdo_v, lw_v, xd_v, yd_v, zd_v, f_v,
                         params, damage_params, output_params, filament_params, node_dens_vec, r_sub_vec)
 
     # gp2D.wire_mesh_2D_plot_dyn(Ro, Ri, r_sub_vec, node_dens_vec, params,
