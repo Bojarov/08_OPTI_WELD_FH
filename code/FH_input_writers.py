@@ -22,8 +22,8 @@ def write_header_input(units, sigma, freq, mu_r, ndec, out_inp):
     out_inp.close()
 
 
-def write_header_ZC(phys_params, input_filename, ndec=1, units="M"):
-    sigma, mu_0, mu_r, freq = phys_params
+def write_header_ZC(phys_params_run, input_filename, ndec=1, units="M"):
+    sigma, mu_0, mu_r, freq = phys_params_run
     """puts the physical parameters in the header of the fasthenry input file
     """
     out_inp = open(input_filename, "a")
@@ -95,9 +95,7 @@ def write_node_seg_wire(geo_objects, input_filename):
             external = True
     if external:
         out_inp.writelines("\n" + "*Define in and out" + "\n")  # define in and out nodes
-        out_inp.writelines("\n" + ".External " + node_in +" "+ node_out)
-
-
+        out_inp.writelines("\n" + ".External " + node_in + " " + node_out)
 
 
 def write_node_seg_input_dyn(tube_segment_lists, input_filename, l_sub_vec, out_inp):
@@ -216,7 +214,7 @@ def write_loop_input(geo_objects, input_filename):
     if len(loop_list) > 0:
         for loop_ind in range(len(loop_list)):
             # unpacking loop parameters
-            p, wl, hl, alpha, beta, gamma, sigmal, wf, hf, nhinc_f, nwinc_f = \
+            p, wl, hl, alpha, beta, gamma, sigma_l, wf, hf, nhinc_f, nwinc_f = \
                 loop_list[loop_ind]
 
             out_inp.writelines("\n" + "*The nodes and segments of loop # " + str(loop_ind) + " \n")
@@ -224,7 +222,7 @@ def write_loop_input(geo_objects, input_filename):
             corners = list(gh.loop_corners(loop_list[loop_ind]))
             for i in range(len(corners)):
                 corner = corners[i]
-                # write corner node coords into file
+                # write corner node coordinates into file
                 out_inp.writelines("N_L_" + str(loop_ind) + "_" + str(i)
                                    + " x=" + str(corner[0])
                                    + " y=" + str(corner[1])
@@ -234,11 +232,8 @@ def write_loop_input(geo_objects, input_filename):
                 out_inp.writelines("E_L_" + str(loop_ind) + "_" + str(i)
                                    + " N_L_" + str(loop_ind) + "_" + str(i) + " N_L_" + str(loop_ind) + "_" + str(
                     (i + 1) % len(corners))
-                                   + " w=" + str(wf) + " h=" + str(hf) + " sigma= " + str(sigmal)
+                                   + " w=" + str(wf) + " h=" + str(hf) + " sigma= " + str(sigma_l)
                                    + " nhinc=" + str(nhinc_f) + " nwinc=" + str(nwinc_f) + "\n")
-
-
-
 
     out_inp.close()
 
@@ -264,7 +259,7 @@ def write_det_loop_input(geo_objects, input_filename):
                                    + " y=" + str(corner[1])
                                    + " z=" + str(corner[2]) + "\n")
 
-            for i in range(len(corners)-1):
+            for i in range(len(corners) - 1):
                 out_inp.writelines("E_DL_" + str(loop_ind) + "_" + str(i)
                                    + " N_DL_" + str(loop_ind) + "_" + str(i) + " N_DL_" + str(loop_ind) + "_" + str(
                     (i + 1) % len(corners))
@@ -273,9 +268,10 @@ def write_det_loop_input(geo_objects, input_filename):
 
             out_inp.writelines("\n" + "*Define in and out" + "\n")  # define in and out nodes
             out_inp.writelines("\n" + ".External " + "N_DL_" + str(loop_ind)
-                               + "_" + "0" +" " + "N_DL_" + str(loop_ind) + "_" + str(len(corners)-1))
+                               + "_" + "0" + " " + "N_DL_" + str(loop_ind) + "_" + str(len(corners) - 1))
             out_inp.writelines("\n")
     out_inp.close()
+
 
 def write_subcon_seg_input(sub_con_list, input_filename):
     out_inp = open(input_filename, "a")
@@ -296,17 +292,18 @@ def write_subcon_seg_input(sub_con_list, input_filename):
 
     out_inp.close()
 
+
 def write_plane_input(geo_objects, input_filename):
     plane_list = geo_objects['planes']
     """
     writes all defined planes into the input file
     """
 
-
     out_inp = open(input_filename, "a")
     out_inp.writelines("\n" + "*The planes defined...\n")
     for i in plane_list:
         plane_index = plane_list.index(i)
+        sigma_plane = i[5]
 
         out_inp.writelines("g_" + str(plane_index)  # write the corners of the plane
                            + " x1=" + str(i[0][0])
@@ -318,7 +315,7 @@ def write_plane_input(geo_objects, input_filename):
                            + " x3=" + str(i[2][0])
                            + " y3=" + str(i[2][1])
                            + " z3=" + str(i[2][2])
-                           + " thick=" + str(i[3]) + " file = NONE"
+                           + " thick=" + str(i[3]) + " sigma=" + str(sigma_plane) + " file = NONE"
                            + "\n"
                            + "+ contact initial_grid (" + str(int(i[4])) + "," + str(int(i[4])) + ")")
 

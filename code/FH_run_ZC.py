@@ -8,12 +8,11 @@ import numpy as np
 FH_input_filename = "input.inp"
 
 
-def run_FH_ZC(phys_params, geo_objects, sub_div_auto):
+def run_FH_ZC(phys_params_run, geo_objects, sub_div_auto, message=False):
     if not os.path.isdir('ZC_input_files'):
         os.mkdir('ZC_input_files')
 
-
-    FHin.write_header_ZC(phys_params, FH_input_filename)
+    FHin.write_header_ZC(phys_params_run, FH_input_filename)
     FHin.write_node_seg_wire(geo_objects, FH_input_filename)
     FHin.write_det_loop_input(geo_objects, FH_input_filename)
     #FHin.write_loop_input(geo_objects, FH_input_filename)
@@ -33,7 +32,8 @@ def run_FH_ZC(phys_params, geo_objects, sub_div_auto):
         #                     stdout=subprocess.PIPE)
 
         output_fh = p.communicate()
-        print(output_fh)
+        if message:
+            print(output_fh)
 
     else:
 
@@ -42,5 +42,6 @@ def run_FH_ZC(phys_params, geo_objects, sub_div_auto):
                              stdout=subprocess.PIPE)
 
         output_fh = p.communicate()
-        print(output_fh)
+        if message:
+            print(output_fh)
 
