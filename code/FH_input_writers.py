@@ -273,6 +273,41 @@ def write_det_loop_input(geo_objects, input_filename):
     out_inp.close()
 
 
+def write_pass_loop_input(geo_objects, input_filename):
+    loop_list = geo_objects['passive_loops']
+
+    out_inp = open(input_filename, "a")
+    if len(loop_list) > 0:
+        for loop_ind in range(len(loop_list)):
+            # unpacking loop parameters
+            p, wl, hl, alpha, beta, gamma, sigma_l, wf, hf, nhinc_f, nwinc_f = \
+                loop_list[loop_ind]
+
+            out_inp.writelines("\n" + "*The nodes and segments of passive loops # " + str(loop_ind) + " \n")
+
+            corners = list(gh.det_loop_corners(loop_list[loop_ind]))
+            for i in range(len(corners)):
+                corner = corners[i]
+                # write corner node coords into file
+                out_inp.writelines("N_PL_" + str(loop_ind) + "_" + str(i)
+                                   + " x=" + str(corner[0])
+                                   + " y=" + str(corner[1])
+                                   + " z=" + str(corner[2]) + "\n")
+
+            for i in range(len(corners) - 1):
+                out_inp.writelines("E_PL_" + str(loop_ind) + "_" + str(i)
+                                   + " N_PL_" + str(loop_ind) + "_" + str(i) + " N_PL_" + str(loop_ind) + "_" + str(
+                    (i + 1) % len(corners))
+                                   + " w=" + str(wf) + " h=" + str(hf) + " sigma= " + str(sigma_l)
+                                   + " nhinc=" + str(nhinc_f) + " nwinc=" + str(nwinc_f) + "\n")
+
+            out_inp.writelines("\n" + "*Define in and out" + "\n")  # define in and out nodes
+            out_inp.writelines("\n" + ".External " + "N_PL_" + str(loop_ind)
+                               + "_" + "0" + " " + "N_PL_" + str(loop_ind) + "_" + str(len(corners) - 1))
+            out_inp.writelines("\n")
+    out_inp.close()
+
+
 def write_subcon_seg_input(sub_con_list, input_filename):
     out_inp = open(input_filename, "a")
 

@@ -316,7 +316,7 @@ def bfz_plot(b_at_det, freqs, det_pos):
     axes = [ax1, ax2, ax3, ax4, ax5]
 
     for ax in axes:
-        ax.ticklabel_format(axis='y', style='sci', scilimits=(0, 0), useOffset=None, useLocale=None, useMathText=None)
+        #ax.ticklabel_format(axis='y', style='sci', scilimits=(0, 0), useOffset=None, useLocale=None, useMathText=None)
         ax.set_xlabel(r'x[m]')
         ax.grid()
     ax1.set_ylabel(r'$|B_x|/|\mu_0 I_W/ 2\pi|$')
@@ -326,12 +326,12 @@ def bfz_plot(b_at_det, freqs, det_pos):
     ax5.set_ylabel(r'$arg(B_z/B_x)/\pi$')
 
     for i in range(n_f):
-        ax1.plot(det_pos[:, 1], abs(b_at_det[:, i, 0]))
-        ax2.plot(det_pos[:, 1], abs(b_at_det[:, i, 1]))
-        ax3.plot(det_pos[:, 1], abs(b_at_det[:, i, 2]), label='f=' + str(freqs[i]) + "Hz")
+        ax1.plot(det_pos[:, 0], abs(b_at_det[:, i, 0]))
+        ax2.plot(det_pos[:, 0], abs(b_at_det[:, i, 1]))
+        ax3.plot(det_pos[:, 0], abs(b_at_det[:, i, 2]), label='f=' + str(freqs[i]) + "Hz")
 
-        ax4.plot(det_pos[:, 1], abs(b_at_det[:, i, 2])/abs(b_at_det[:, i, 0]))
-        ax5.plot(det_pos[:, 1], 1/np.pi*np.angle(b_at_det[:, i, 2]/b_at_det[:, i, 0])%(2*np.pi))
-    ax5.set_ylim(0,2)
+        ax4.plot(det_pos[:, 0], abs(b_at_det[:, i, 2])/abs(b_at_det[:, i, 0]))
+        ax5.plot(det_pos[:, 0], 1/np.pi*np.angle(b_at_det[:, i, 2]/b_at_det[:, i, 0]))
+    ax5.set_ylim(-1,1)
     #ax1.plot(det_pos[:, 1], 1/det_pos[:, 1])
     ax3.legend()

@@ -14,9 +14,9 @@ import code.observable_plotters as op
 units = "M"  # chose from km, m ,cm, mm, um, in , mils
 sigma = 10 ** 6  # specify conductivity in 1/(Units*Ohms),
 mu_0 = 4 * np.pi * 10 ** (-7)
-mu_r = 10 ** 0  # 100.0
-#freqs = [4, 8, 12, 24, 32, 64, 128, 256, 512, 1024]
-freqs = [4]#, 16, 64, 256, 1024]
+mu_r = 10 ** 3  # 100.0
+# freqs = [4, 8, 12, 24, 32, 64, 128, 256, 512, 1024]
+freqs = [4, 16, 64, 256, 1024]
 
 phys_params = {"sigma": sigma, "mu0": mu_0, "mur": mu_r, "freqs": freqs}
 
@@ -34,28 +34,27 @@ w_wire = 0.1
 h_wire = 0.1
 
 # Detector positions
-n_det = 11  # number of detector loops
+n_det = 1  # number of detector loops
 w_det = 1.0  # width of the detector array
 det_pos = np.zeros((n_det, 3))
 
-
-det_pos[:, 0] = np.linspace(-w_det / 2, w_det / 2, n_det)
+#det_pos[:, 0] = np.linspace(-w_det / 2, w_det / 2, n_det)
+det_pos[:, 0] = 0
 det_pos[:, 1] = 1.0 * np.ones(n_det)
 det_pos[:, 2] = l_wire / 2 * np.ones(n_det)
 
-#det_pos[:, 0] = 0.0 * np.ones(n_det)
-#det_pos[:, 1] = np.linspace(0.2, 1.0, n_det)
-#det_pos[:, 2] = l_wire/2 * np.ones(n_det)
-
+# det_pos[:, 0] = 0.0 * np.ones(n_det)
+# det_pos[:, 1] = np.linspace(0.2, 1.0, n_det)
+# det_pos[:, 2] = l_wire/2 * np.ones(n_det)
 
 
 # Detector loop dimensions and direction of measured field component
 i_xyz = 0  # direction index 0...x, 1...y, 2...z
-w_l = 0.02  # width and height of loop
-h_l = 0.02
+w_l = 0.2  # width and height of loop
+h_l = 0.2
 
 # Filaments parameters of the detector loops
-sigma_l = sigma
+sigma_l = sigma*0.001
 wf = 0.001
 hf = 0.001
 det_loop_fil_params = [wf, hf, nhinc, nwinc, sigma_l]
@@ -65,44 +64,45 @@ p1 = tuple(np.array([1, 1 + 0.1, l_wire / 2 - 0.1]))
 p2 = tuple(np.array([1, 1 + 0.1, l_wire / 2 + 0.1]))
 p3 = tuple(np.array([1, 1 - 0.1, l_wire / 2 + 0.1]))
 m_grid = 10
-sigma_p = 2*10**6
+sigma_p = 2 * 10 ** 6
 thick = 0.005
 
 # plane 2 definition
-#p = np.array([0, 0, l_wire / 2])
-#alpha_p = 0.0*np.pi
-#beta_p = 0.5*np.pi
-#gamma_p = 0
-#a_p = 1.0
-#b_p = 2.0
-#m_grid = 10
-#sigma_p = 2*10**6
-#thick = 0.005
+# p = np.array([0, 0, l_wire / 2])
+# alpha_p = 0.0*np.pi
+# beta_p = 0.5*np.pi
+# gamma_p = 0
+# a_p = 1.0
+# b_p = 2.0
+# m_grid = 10
+# sigma_p = 2*10**6
+# thick = 0.005
 
 # 3D visualization
 viso_point = [0, 1, l_wire / 2]
 viso_dist = 1.5
 
 # dict of lists to gather defined objects
-geo_objects = {"wires": [], "loops": [], "det_loops": [], "planes": []}
+geo_objects = {"wires": [], "passive_loops": [], "det_loops": [], "planes": []}
 
 
 def main():
     gb.wire_builder(p1_wire, p2_wire, w_wire, h_wire, phys_params, fil_params, geo_objects["wires"], external=True)
-    #gb.plane_builder(p1, p2, p3, thick, sigma_p, m_grid, geo_objects["planes"])
-    #gb.plane_builder_angle(p, alpha_p, beta_p, gamma_p, a_p, b_p, thick, sigma_p, m_grid, geo_objects["planes"])
     # adding the detector loop
-    gb.detector_builder(det_pos, 0, w_l, h_l, det_loop_fil_params, geo_objects["det_loops"])
+    gb.det_loop_builder(det_pos, 0, w_l, h_l, det_loop_fil_params, geo_objects["det_loops"])
+
     # adding a passive loop
     w_p = 0.2
     h_p = 0.2
-    pass_loop_dir = 0           # direction of loop normal
     pass_pos = np.zeros((1, 3))
-    pass_pos[0, 0] = 1
-    pass_pos[0, 1] = 1
+    pass_pos[0, 0] = 0
+    pass_pos[0, 1] = -1.0
     pass_pos[0, 2] = l_wire / 2
-    gb.detector_builder(pass_pos, pass_loop_dir, w_p, h_p, det_loop_fil_params, geo_objects["det_loops"])
+    alpha_p = 0.0 * np.pi
+    beta_p = 0.5 * np.pi
+    gamma_p = 1.0 * np.pi
 
+    gb.loop_builder(pass_pos, alpha_p, beta_p, gamma_p, w_l, h_l, det_loop_fil_params, geo_objects["passive_loops"])
 
     b_at_det = ocz.b_det_f_Z(phys_params, det_pos, w_l, h_l, det_loop_fil_params, geo_objects)
 

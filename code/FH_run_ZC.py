@@ -15,7 +15,7 @@ def run_FH_ZC(phys_params_run, geo_objects, sub_div_auto, message=False):
     FHin.write_header_ZC(phys_params_run, FH_input_filename)
     FHin.write_node_seg_wire(geo_objects, FH_input_filename)
     FHin.write_det_loop_input(geo_objects, FH_input_filename)
-    #FHin.write_loop_input(geo_objects, FH_input_filename)
+    FHin.write_pass_loop_input(geo_objects, FH_input_filename)
     FHin.write_plane_input(geo_objects, FH_input_filename)
 
 

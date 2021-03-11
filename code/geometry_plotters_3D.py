@@ -62,18 +62,18 @@ def ZC_viso(geo_objects, view_pos, dist):
     ax.set_ylim3d(y - dist, y + dist)
     ax.set_zlim3d(z - dist, z + dist)
 
-    loop_list = geo_objects['loops']
+    passive_loop_list = geo_objects['passive_loops']
     det_loop_list = geo_objects['det_loops']
     wire_list = geo_objects['wires']
     plane_list = geo_objects['planes']
 
-    for loop in loop_list:
+    for loop in passive_loop_list:
         # plot the node points
-        Q_list = list(gh.loop_corners(loop))
-        ax.scatter(*zip(*Q_list), color='b')
+        Q_list = list(gh.det_loop_corners(loop))
+        ax.scatter(*zip(*Q_list), color='blue')
         # connect the nodes to represent the loop
-        Q_list.append(Q_list[0])
-        ax.plot(*zip(*Q_list), color='b')
+        ax.plot(*zip(*Q_list), color='blue')
+        ax.scatter(Q_list[-1][0], Q_list[-1][1], Q_list[-1][2], color='black', marker='x')
 
     for loop in det_loop_list:
         # plot the node points

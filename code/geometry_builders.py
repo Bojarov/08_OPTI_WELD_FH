@@ -204,7 +204,7 @@ def sub_connection(s1, s2, phi_con, l_sub_vec, r_sub_vec, sub_con_list,
 
 
 # ZC code
-def detector_builder(det_pos, i_xyz, w_l, h_l, loop_fil_params, loop_list):
+def det_loop_builder(det_pos, i_xyz, w_l, h_l, loop_fil_params, loop_list):
     # if i_xyz == 0:
     alpha, beta, gamma = np.array([0, np.pi / 2, 0])
     if i_xyz == 1:
@@ -217,6 +217,15 @@ def detector_builder(det_pos, i_xyz, w_l, h_l, loop_fil_params, loop_list):
 
     for i in range(n_det):
         p = det_pos[i, :]
+        loop_list.append([p, w_l, h_l, alpha, beta, gamma, sigma_l, wf, hf, nhinc_f, nwinc_f])
+
+
+def loop_builder(loop_pos, alpha, beta, gamma, w_l, h_l, loop_fil_params, loop_list):
+    wf, hf, nhinc_f, nwinc_f, sigma_l = loop_fil_params
+    n_det, _ = np.shape(loop_pos)
+
+    for i in range(n_det):
+        p = loop_pos[i, :]
         loop_list.append([p, w_l, h_l, alpha, beta, gamma, sigma_l, wf, hf, nhinc_f, nwinc_f])
 
 
