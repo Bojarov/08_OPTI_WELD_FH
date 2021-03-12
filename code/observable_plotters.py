@@ -10,7 +10,6 @@ import itertools
 import matplotlib.gridspec as gridspec
 
 
-
 def I_wire_plot(freq_vec, freq_vec_a, params, damage_params, filament_params, output_params,
                 r_sub_vec, l_sub_vec, node_dens_vec, loop_list, sub_con_list):
     ro_t, ri_t, flen, node_dens, sigma, mu_0, mu_r, freq = params
@@ -144,6 +143,7 @@ def B_wire_comp_plot(params, damage_params, filament_params, r_sub_vec,
         # print("gugugugugu")
         # print(bc_vec_fh)
     plt.tight_layout()
+
 
 def b_at_det_iter(phi_cv, dw_v, rdi_v, rdo_v, lw_v, xd_v, yd_v, zd_v, f_v,
                   params, damage_params, output_params, filament_params, node_dens_vec, r_sub_vec):
@@ -306,32 +306,51 @@ def b_at_det_plot_f(phi_cv, dw_v, rdi_v, rdo_v, lw_v, xd_v, yd_v, zd_v, f_v,
 def bfz_plot(b_at_det, freqs, det_pos):
     n_det, n_f, n_dim = np.shape(b_at_det)
     fig = plt.figure(constrained_layout=True, figsize=(8, 8))
-    spec = gridspec.GridSpec(ncols=6, nrows=2, figure=fig)
+    spec = gridspec.GridSpec(ncols=12, nrows=2, figure=fig)
 
-    ax1 = fig.add_subplot(spec[0, 0:2])
-    ax2 = fig.add_subplot(spec[0, 2:4])
-    ax3 = fig.add_subplot(spec[0, 4:6])
+    ax1 = fig.add_subplot(spec[0, 0:4])
+    ax2 = fig.add_subplot(spec[0, 4:8])
+    ax3 = fig.add_subplot(spec[0, 8:12])
     ax4 = fig.add_subplot(spec[1, 0:3])
     ax5 = fig.add_subplot(spec[1, 3:6])
-    axes = [ax1, ax2, ax3, ax4, ax5]
+    ax6 = fig.add_subplot(spec[1, 6:9])
+    ax7 = fig.add_subplot(spec[1, 9:12])
+    axes = [ax1, ax2, ax3, ax4, ax5, ax6, ax7]
 
     for ax in axes:
-        #ax.ticklabel_format(axis='y', style='sci', scilimits=(0, 0), useOffset=None, useLocale=None, useMathText=None)
+        ax.ticklabel_format(axis='y', style='sci', scilimits=(0, 0), useOffset=None, useLocale=None, useMathText=None)
         ax.set_xlabel(r'x[m]')
         ax.grid()
     ax1.set_ylabel(r'$|B_x|/|\mu_0 I_W/ 2\pi|$')
     ax2.set_ylabel(r'$|B_y|/|\mu_0 I_W/ 2\pi|$')
     ax3.set_ylabel(r'$|B_z|/|\mu_0 I_W/ 2\pi|$')
     ax4.set_ylabel(r'$|B_z/B_x|$')
-    ax5.set_ylabel(r'$arg(B_z/B_x)/\pi$')
+    ax5.set_ylabel(r'$arg(B_x)/\pi$')
+    ax6.set_ylabel(r'$arg(B_y)/\pi$')
+    ax7.set_ylabel(r'$arg(B_z)/\pi$')
 
     for i in range(n_f):
         ax1.plot(det_pos[:, 0], abs(b_at_det[:, i, 0]))
         ax2.plot(det_pos[:, 0], abs(b_at_det[:, i, 1]))
         ax3.plot(det_pos[:, 0], abs(b_at_det[:, i, 2]), label='f=' + str(freqs[i]) + "Hz")
 
-        ax4.plot(det_pos[:, 0], abs(b_at_det[:, i, 2])/abs(b_at_det[:, i, 0]))
-        ax5.plot(det_pos[:, 0], 1/np.pi*np.angle(b_at_det[:, i, 2]/b_at_det[:, i, 0]))
-    ax5.set_ylim(-1,1)
-    #ax1.plot(det_pos[:, 1], 1/det_pos[:, 1])
+        ax4.plot(det_pos[:, 0], abs(b_at_det[:, i, 2]) / abs(b_at_det[:, i, 0]))
+        ax5.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 0])), linestyle='-',
+                 label='Bx, f=' + str(freqs[i]) + "Hz")
+        ax6.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 1])), linestyle='--',
+                 label='By, f=' + str(freqs[i]) + "Hz")
+        ax7.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 2])), linestyle=':',
+                 label='Bz, f=' + str(freqs[i]) + "Hz")
+        # print(1 / np.pi * (np.angle(b_at_det[:, i, 0])))
+        # exit()
+
+        # ax5.plot(det_pos[:, 0], 1/np.pi*(np.angle(b_at_det[:, i, 2])-np.angle(b_at_det[:, i, 0])))
+    ax5.set_ylim(-1, 1.1)
+    ax6.set_ylim(-1, 1.1)
+    ax7.set_ylim(-1, 1.1)
+    # ax1.plot(det_pos[:, 1], 1/det_pos[:, 1])
     ax3.legend()
+    # ax4.legend()
+    #ax5.legend()
+    #ax6.legend()
+    #ax7.legend()

@@ -3,7 +3,7 @@
 .Units M
 *Frequency range of interest
 *Note that this is an effective frequency to include FMs
-.freq fmin=1.02E+06 fmax=1.02E+06 ndec=1
+.freq fmin=1.02E+03 fmax=1.02E+03 ndec=1
 
 *The nodes of the wires
 N_0_1 x=0.0 y=0.0 z=0.0
@@ -16,30 +16,30 @@ E_0 N_0_1 N_0_2 w=0.1 h=0.1 sigma= 1000000 nhinc=1 nwinc=1
 
 .External N_0_1 N_0_2
 *The nodes and segments of detector loops # 0 
-N_DL_0_0 x=6.123233995736766e-18 y=0.9 z=14.9
-N_DL_0_1 x=6.123233995736766e-18 y=1.1 z=14.9
-N_DL_0_2 x=-6.123233995736766e-18 y=1.1 z=15.1
-N_DL_0_3 x=-6.123233995736766e-18 y=0.9 z=15.1
-N_DL_0_4 x=6.117110761741029e-18 y=0.9 z=14.9001
-E_DL_0_0 N_DL_0_0 N_DL_0_1 w=0.001 h=0.001 sigma= 1000.0 nhinc=1 nwinc=1
-E_DL_0_1 N_DL_0_1 N_DL_0_2 w=0.001 h=0.001 sigma= 1000.0 nhinc=1 nwinc=1
-E_DL_0_2 N_DL_0_2 N_DL_0_3 w=0.001 h=0.001 sigma= 1000.0 nhinc=1 nwinc=1
-E_DL_0_3 N_DL_0_3 N_DL_0_4 w=0.001 h=0.001 sigma= 1000.0 nhinc=1 nwinc=1
+N_DL_0_0 x=0.505 y=0.995 z=15.0
+N_DL_0_1 x=0.505 y=1.005 z=15.0
+N_DL_0_2 x=0.495 y=1.005 z=15.0
+N_DL_0_3 x=0.495 y=0.995 z=15.0
+N_DL_0_4 x=0.504995 y=0.995 z=15.0
+E_DL_0_0 N_DL_0_0 N_DL_0_1 w=0.001 h=0.001 sigma= 100.0 nhinc=1 nwinc=1
+E_DL_0_1 N_DL_0_1 N_DL_0_2 w=0.001 h=0.001 sigma= 100.0 nhinc=1 nwinc=1
+E_DL_0_2 N_DL_0_2 N_DL_0_3 w=0.001 h=0.001 sigma= 100.0 nhinc=1 nwinc=1
+E_DL_0_3 N_DL_0_3 N_DL_0_4 w=0.001 h=0.001 sigma= 100.0 nhinc=1 nwinc=1
 
 *Define in and out
 
 .External N_DL_0_0 N_DL_0_4
 
 *The nodes and segments of passive loops # 0 
-N_PL_0_0 x=-6.123233995736766e-18 y=-0.9 z=14.9
-N_PL_0_1 x=1.83697019872103e-17 y=-1.1 z=14.9
-N_PL_0_2 x=6.123233995736766e-18 y=-1.1 z=15.1
-N_PL_0_3 x=-1.83697019872103e-17 y=-0.9 z=15.1
-N_PL_0_4 x=-6.1293572297325036e-18 y=-0.9 z=14.9001
-E_PL_0_0 N_PL_0_0 N_PL_0_1 w=0.001 h=0.001 sigma= 1000.0 nhinc=1 nwinc=1
-E_PL_0_1 N_PL_0_1 N_PL_0_2 w=0.001 h=0.001 sigma= 1000.0 nhinc=1 nwinc=1
-E_PL_0_2 N_PL_0_2 N_PL_0_3 w=0.001 h=0.001 sigma= 1000.0 nhinc=1 nwinc=1
-E_PL_0_3 N_PL_0_3 N_PL_0_4 w=0.001 h=0.001 sigma= 1000.0 nhinc=1 nwinc=1
+N_PL_0_0 x=0.17677669529663687 y=-0.75 z=14.823223304703363
+N_PL_0_1 x=0.17677669529663692 y=-1.25 z=14.823223304703363
+N_PL_0_2 x=-0.17677669529663687 y=-1.25 z=15.176776695296637
+N_PL_0_3 x=-0.17677669529663692 y=-0.75 z=15.176776695296637
+N_PL_0_4 x=0.17659991860134022 y=-0.75 z=14.82340008139866
+E_PL_0_0 N_PL_0_0 N_PL_0_1 w=0.01 h=0.01 sigma= 1000000 nhinc=1 nwinc=1
+E_PL_0_1 N_PL_0_1 N_PL_0_2 w=0.01 h=0.01 sigma= 1000000 nhinc=1 nwinc=1
+E_PL_0_2 N_PL_0_2 N_PL_0_3 w=0.01 h=0.01 sigma= 1000000 nhinc=1 nwinc=1
+E_PL_0_3 N_PL_0_3 N_PL_0_4 w=0.01 h=0.01 sigma= 1000000 nhinc=1 nwinc=1
 
 *Define in and out
 
