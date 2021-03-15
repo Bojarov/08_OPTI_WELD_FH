@@ -16,11 +16,11 @@ E_0 N_0_1 N_0_2 w=0.1 h=0.1 sigma= 1000000 nhinc=1 nwinc=1
 
 .External N_0_1 N_0_2
 *The nodes and segments of detector loops # 0 
-N_DL_0_0 x=0.505 y=0.995 z=15.0
-N_DL_0_1 x=0.505 y=1.005 z=15.0
-N_DL_0_2 x=0.495 y=1.005 z=15.0
-N_DL_0_3 x=0.495 y=0.995 z=15.0
-N_DL_0_4 x=0.504995 y=0.995 z=15.0
+N_DL_0_0 x=0.525 y=0.975 z=15.0
+N_DL_0_1 x=0.525 y=1.025 z=15.0
+N_DL_0_2 x=0.475 y=1.025 z=15.0
+N_DL_0_3 x=0.475 y=0.975 z=15.0
+N_DL_0_4 x=0.524975 y=0.975 z=15.0
 E_DL_0_0 N_DL_0_0 N_DL_0_1 w=0.001 h=0.001 sigma= 100.0 nhinc=1 nwinc=1
 E_DL_0_1 N_DL_0_1 N_DL_0_2 w=0.001 h=0.001 sigma= 100.0 nhinc=1 nwinc=1
 E_DL_0_2 N_DL_0_2 N_DL_0_3 w=0.001 h=0.001 sigma= 100.0 nhinc=1 nwinc=1
@@ -31,11 +31,11 @@ E_DL_0_3 N_DL_0_3 N_DL_0_4 w=0.001 h=0.001 sigma= 100.0 nhinc=1 nwinc=1
 .External N_DL_0_0 N_DL_0_4
 
 *The nodes and segments of passive loops # 0 
-N_PL_0_0 x=0.17677669529663687 y=-0.75 z=14.823223304703363
-N_PL_0_1 x=0.17677669529663692 y=-1.25 z=14.823223304703363
-N_PL_0_2 x=-0.17677669529663687 y=-1.25 z=15.176776695296637
-N_PL_0_3 x=-0.17677669529663692 y=-0.75 z=15.176776695296637
-N_PL_0_4 x=0.17659991860134022 y=-0.75 z=14.82340008139866
+N_PL_0_0 x=1.0 y=1.05 z=14.95
+N_PL_0_1 x=1.0 y=0.95 z=14.95
+N_PL_0_2 x=1.0 y=0.95 z=15.05
+N_PL_0_3 x=1.0 y=1.05 z=15.05
+N_PL_0_4 x=1.0 y=1.05 z=14.95005
 E_PL_0_0 N_PL_0_0 N_PL_0_1 w=0.01 h=0.01 sigma= 1000000 nhinc=1 nwinc=1
 E_PL_0_1 N_PL_0_1 N_PL_0_2 w=0.01 h=0.01 sigma= 1000000 nhinc=1 nwinc=1
 E_PL_0_2 N_PL_0_2 N_PL_0_3 w=0.01 h=0.01 sigma= 1000000 nhinc=1 nwinc=1
