@@ -17,7 +17,7 @@ def b_det_f_Z(phys_params, det_pos, w_l, h_l, det_loop_fil_params, geo_objects):
     wf_l = det_loop_fil_params[0]
 
     for i in range(n_det):
-        print(i)
+        #print(i)
         det_pos_i = det_pos[i, :].reshape(1, 3)
         for j in range(n_f):
             freq = freqs[j]
@@ -27,16 +27,14 @@ def b_det_f_Z(phys_params, det_pos, w_l, h_l, det_loop_fil_params, geo_objects):
                 gb.det_loop_builder(det_pos_i, i_xyz, w_l, h_l, det_loop_fil_params, geo_objects_local["det_loops"])
                 phys_params_run = [phys_params["sigma"], phys_params["mu0"], phys_params["mur"], freq]
                 fhz.run_FH_ZC(phys_params_run, geo_objects_local, sub_div_auto=True)
-                ZC_mat = ohz.ZC_mat_extract(geo_objects_local)
-
-                Y = inv(ZC_mat)
-                L12 = (ZC_mat[0, 1] / (2 * np.pi * freq)).imag  # mutual inductance wire, det loop
-                L23 = (ZC_mat[1, 2] / (2 * np.pi * freq)).imag
-                Y11 = Y[0, 0]
-                Y31 = Y[2, 0]
-
-                # B_pass_loops
-                b_at_det_f[i, j, k] = (L12 + L23 * (Y31 / Y11)) / ((w_l - wf_l) ** 2)
+                ZC_mat = ohz.ZC_mat_extract(geo_objects_local)  # impedance matrix
+                Y = inv(ZC_mat)                                 # admittance matrix
+                L12 = (ZC_mat[0, 1] / (2 * np.pi * freq)).imag  # mutual inductance between wire and detector loop
+                Y11 = Y[0, 0]                                   # admittance of the wire
+                Y_pass_loops = Y[2:, 0]
+                L_pass_loops = (ZC_mat[1, 2:] / (2 * np.pi * freq)).imag
+                b_pass_loops = np.sum(L_pass_loops * Y_pass_loops / Y11)
+                b_at_det_f[i, j, k] = (L12 + b_pass_loops) / ((w_l - wf_l) ** 2)
                 norm = mu0 / (2 * np.pi)
 
     return b_at_det_f / norm

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import code.geometry_builders as gb
 from matplotlib import rc, font_manager
+import matplotlib.patches as patches
 
 sizeOfFont = 12
 fontProperties = {'family': 'sans-serif', 'sans-serif': ['Helvetica'],
@@ -151,3 +152,59 @@ def wire_mesh_2D_plot_dyn(ro_t, ri_t, r_sub_vec, node_dens_vec, params,
     plt.grid()
 
     print("The geometry is made of " + str(n_segments) + " segments.")
+
+
+def loop_plane_2d(a, b, n_a, n_b):
+    #TODO finish the loop surface
+
+    x_p = np.linspace(-a / 2, a / 2, 2)
+    y_p = np.linspace(-b / 2, b / 2, 2)
+    plane_crnrs = np.array(np.meshgrid(x_p, y_p)).T.reshape(-1, 2)
+    print(plane_crnrs)
+    rect = patches.Rectangle((-a / 2, -b / 2), a, b, linewidth=1, edgecolor='r', facecolor='none')
+    # loop nodes
+    w_a = b / (n_b + 1)
+    w_b = a / (n_a + 1)
+    x = np.linspace((-a + w_b) / 2, (a - w_b) / 2, n_a + 1)
+    y = np.linspace((-b + w_a) / 2, (b - w_a) / 2, n_b + 1)
+    loop_nodes = np.array(np.meshgrid(x, y, [0])).T.reshape(-1, 3)
+    # contact nodes
+    x_c = loop_nodes[0:-(n_b+1), 0]
+    y_c = loop_nodes[0:-(n_b+1), 1]
+
+
+    #x_c_f = loop_nodes[1::2, 0]+0.1
+    x_c_f = x_c[1::2]+0.1
+    #y_c_f = loop_nodes[1::2, 1]
+    y_c_f = y_c[1::2]
+    #x_c_f = x_c[:-2] + 0.1
+    #y_c_f = y_c[:-2]
+
+    # loop segments
+    #mask = np.ones(x_c.size, dtype=bool)
+    #mask[::n_b + 1] = 0
+
+
+    x_links = []
+
+    ##print(x_c[mask])
+    # exit()
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.scatter(loop_nodes[:, 0], loop_nodes[:, 1], color='blue')
+    # ax.scatter(loop_nodes[::2, 0], loop_nodes[::2, 1], color='yellow')
+    ax.scatter(x_c_f, y_c_f, color='yellow')
+
+    # ax.plot(loop_nodes[::2, 0], loop_nodes[::2, 1], color='orange')
+    ax.plot(loop_nodes[:, 0], loop_nodes[:, 1], color='green', linestyle='--')
+    ax.scatter(plane_crnrs[:, 0], plane_crnrs[:, 1], color='red')
+    # ax.plot(plane_crnrs[:, 0], plane_crnrs[:, 1], color='red')
+    # ax.plot(x_c[mask], y_c[mask], color='black')
+
+
+
+
+    ax.add_patch(rect)
+    ax.axis('equal')
+    plt.show()

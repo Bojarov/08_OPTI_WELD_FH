@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import code.geometry_builders as gb
 import code.geometry_plotters_3D as gp3D
+import code.geometry_plotters_2D as gp2D
 import code.FH_run_ZC as fhzc
 import code.ZC_output_helpers as ohz
 import code.obs_calc_ZC as ocz
@@ -68,44 +69,66 @@ m_grid = 10
 sigma_p = 2 * 10 ** 6
 thick = 0.005
 
-
-
 # 3D visualization
 viso_point = [0, 1, l_wire / 2]
 viso_dist = 1.5
 
 # dict of lists to gather defined objects
-geo_objects = {"wires": [], "passive_loops": [], "det_loops": [], "planes": []}
+geo_objects = {"wires": [], "passive_loops": [], "det_loops": [], "planes": [], "test_plane_1": []}
 
 
+# Todo change system so that object categories get added to the dict when created insted of predefining them
+
+
+# todo here geo_objects seems global, can i put it in main?
 def main():
+    p = np.zeros((1, 3))
+    alpha_p = 0.0 * np.pi
+    beta_p = 0.25 * np.pi
+    gamma_p = 1.0 * np.pi
+
+    # gb.plane_builder_loops(p, alpha_p, beta_p, gamma_p, a, b, thick, sigma_p, n_a, n_b, geo_objects["planes"])
+    plt.show()
+
     gb.wire_builder(p1_wire, p2_wire, w_wire, h_wire, phys_params, fil_params, geo_objects["wires"], external=True)
 
     # adding the detector loops
     gb.det_loop_builder(det_pos, 0, w_l, h_l, det_loop_fil_params, geo_objects["det_loops"])
 
+
     # adding a passive loop
-    w_p = 0.1
-    h_p = 0.1
+    w_p = 0.05
+    h_p = 0.05
     pass_pos = np.zeros((1, 3))
     pass_pos[0, 0] = 1.0
     pass_pos[0, 1] = 1.0
     pass_pos[0, 2] = l_wire / 2
+
     alpha_p = 0.0 * np.pi
-    beta_p = 0.5 * np.pi
+    beta_p = 0.25 * np.pi
     gamma_p = 1.0 * np.pi
-    wf_p = 0.01
+
+
+    alpha_c = 0.4 * np.pi
+    beta_c = 0.5 * np.pi
+    gamma_c = 0.2 * np.pi
+    wf_p = 0.05
     hf_p = 0.01
-    pass_fil_params = [wf_p, hf_p, nhinc, nwinc, sigma_p]
+    pass_loop_fil_params = [wf_p, hf_p, nhinc, nwinc, sigma_p]
 
-    gb.loop_builder(pass_pos, alpha_p, beta_p, gamma_p, w_p, h_p, pass_fil_params, geo_objects["passive_loops"])
+    gb.loop_builder(pass_pos, alpha_p, beta_p, gamma_p, w_p, h_p, pass_loop_fil_params, geo_objects["passive_loops"])
 
-    b_at_det = ocz.b_det_f_Z(phys_params, det_pos, w_l, h_l, det_loop_fil_params, geo_objects)
+    # adding circular loop
+    gb.circular_loop_builder(pass_pos, alpha_c, beta_c, gamma_c, 0.25, 10, pass_loop_fil_params, geo_objects)
+
+
+
+    #b_at_det = ocz.b_det_f_Z(phys_params, det_pos, w_l, h_l, det_loop_fil_params, geo_objects)
 
     gp3D.ZC_viso(geo_objects, viso_point, viso_dist)
-
-    op.bfz_plot(b_at_det, freqs, det_pos)
-
+    #op.bfz_plot(b_at_det, freqs, det_pos)
+    #print(geo_objects["circ_pass_loops"][0]["nodes"])
+    #print(geo_objects["circ_pass_loops"][0]["nodes"][0, :])
     plt.show()
 
 

@@ -66,23 +66,23 @@ def ZC_viso(geo_objects, view_pos, dist):
     det_loop_list = geo_objects['det_loops']
     wire_list = geo_objects['wires']
     plane_list = geo_objects['planes']
+    circular_loops = geo_objects['circ_pass_loops']
 
     for loop in passive_loop_list:
         # plot the node points
         Q_list = list(gh.det_loop_corners(loop))
-        ax.scatter(*zip(*Q_list), color='blue')
+        ax.scatter(*zip(*Q_list), color='blue', s=2)
         # connect the nodes to represent the loop
         ax.plot(*zip(*Q_list), color='blue')
-        ax.scatter(Q_list[-1][0], Q_list[-1][1], Q_list[-1][2], color='black', marker='x')
+        ax.scatter(Q_list[-1][0], Q_list[-1][1], Q_list[-1][2], color='black', marker='x', s=2)
 
     for loop in det_loop_list:
         # plot the node points
         Q_list = list(gh.det_loop_corners(loop))
-        ax.scatter(*zip(*Q_list), color='orange')
+        ax.scatter(*zip(*Q_list), color='orange', s=2)
         # connect the nodes to represent the loop
         ax.plot(*zip(*Q_list), color='orange')
-        ax.scatter(Q_list[-1][0], Q_list[-1][1], Q_list[-1][2], color='black', marker='x')
-
+        ax.scatter(Q_list[-1][0], Q_list[-1][1], Q_list[-1][2], color='black', marker='x', s=5)
 
     for wire in wire_list:
         p1, p2, w_wire, h_wire, nhinc, nwinc, sigma, name = wire
@@ -106,4 +106,17 @@ def ZC_viso(geo_objects, view_pos, dist):
         ax.add_collection3d(plane_poly_t)
         ax.add_collection3d(plane_poly_c)
         ax.add_collection3d(plane_poly_b)
+
+    for circ_loop in circular_loops:
+        nodes = circ_loop["nodes"]
+        ax.scatter(nodes[1:-1, 0], nodes[1:-1, 1], nodes[1:-1, 2], color='g')
+        ax.plot(nodes[:, 0], nodes[:, 1], nodes[:, 2], color='g')
+        ax.scatter(nodes[0, 0], nodes[0, 1], nodes[0, 2], color='r')
+        ax.scatter(nodes[-1, 0], nodes[-1, 1], nodes[-1, 2], color='r')
+
+        # seg_centers = circ_loop["seg_params"][0]
+        # seg_w_vec = circ_loop["seg_params"][1]
+        # ax.scatter(seg_centers[:, 0], seg_centers[:, 1], seg_centers[:, 2], color='red')
+        # ax.quiver(seg_centers[:, 0], seg_centers[:, 1], seg_centers[:, 2],
+        #          seg_w_vec[:, 0], seg_w_vec[:, 1], seg_w_vec[:, 2])
 

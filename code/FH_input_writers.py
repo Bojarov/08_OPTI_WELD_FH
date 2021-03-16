@@ -46,8 +46,7 @@ def write_node_seg_wire(geo_objects, input_filename):
     """
     writes all defined cuboids into the input file
     """
-    # TODO finish the wire writer
-    # TODO define wire with multiple subdivs...requires input format as series of node points
+    # TODO idea: define wire with multiple subdivs...requires input format as series of node points
 
     wire_list = geo_objects['wires']
 
@@ -288,24 +287,80 @@ def write_pass_loop_input(geo_objects, input_filename):
             corners = list(gh.det_loop_corners(loop_list[loop_ind]))
             for i in range(len(corners)):
                 corner = corners[i]
+
                 # write corner node coords into file
                 out_inp.writelines("N_PL_" + str(loop_ind) + "_" + str(i)
                                    + " x=" + str(corner[0])
                                    + " y=" + str(corner[1])
                                    + " z=" + str(corner[2]) + "\n")
 
+            P1 = corners[0]
+            P2 = corners[1]
+            P3 = corners[3]
+            w12_x, w12_y, w12_z = P2 - P3
+            w23_x, w23_y, w23_z = P1 - P2
+            wx_l = [w12_x, w23_x]
+            wy_l = [w12_y, w23_y]
+            wz_l = [w12_z, w23_z]
+
             for i in range(len(corners) - 1):
+                wx = wx_l[i % 2]
+                wy = wy_l[i % 2]
+                wz = wz_l[i % 2]
                 out_inp.writelines("E_PL_" + str(loop_ind) + "_" + str(i)
                                    + " N_PL_" + str(loop_ind) + "_" + str(i) + " N_PL_" + str(loop_ind) + "_" + str(
                     (i + 1) % len(corners))
                                    + " w=" + str(wf) + " h=" + str(hf) + " sigma= " + str(sigma_l)
+                                   + " wx=" + str(wx) + " wy=" + str(wy) + " wz=" + str(wz)
                                    + " nhinc=" + str(nhinc_f) + " nwinc=" + str(nwinc_f) + "\n")
-
             out_inp.writelines("\n" + "*Define in and out" + "\n")  # define in and out nodes
             out_inp.writelines("\n" + ".External " + "N_PL_" + str(loop_ind)
                                + "_" + "0" + " " + "N_PL_" + str(loop_ind) + "_" + str(len(corners) - 1))
             out_inp.writelines("\n")
     out_inp.close()
+
+
+def write_circ_loop_input(geo_objects, input_filename):
+    loop_list = geo_objects["circ_pass_loops"]
+
+    out_inp = open(input_filename, "a")
+    if len(loop_list) > 0:
+        for loop_ind in range(len(loop_list)):
+            circ_loop = geo_objects["circ_pass_loops"][loop_ind]
+
+            nodes_pos, node_names = circ_loop["nodes"], circ_loop["node_names"]
+
+            out_inp.writelines("\n" + "*The nodes and segments of passive loops # " + str(loop_ind) + " \n")
+
+            for node_name in node_names:
+                node_ind = node_names.index(node_name)
+
+                out_inp.writelines(node_name
+                                   + " x=" + str(nodes_pos[node_ind, 0])
+                                   + " y=" + str(nodes_pos[node_ind, 1])
+                                   + " z=" + str(nodes_pos[node_ind, 2]) + "\n")
+
+            segments, segment_names = circ_loop["segments"], circ_loop["segment_names"]
+            seg_centers, seg_w_vec, loop_fil_params = circ_loop["seg_params"]
+            wf, hf, nhinc, nwinc, sigma = loop_fil_params
+
+            for segment_name in segment_names:
+                seg_ind = segment_names.index(segment_name)
+                wx = seg_w_vec[seg_ind, 0]
+                wy = seg_w_vec[seg_ind, 1]
+                wz = seg_w_vec[seg_ind, 2]
+                out_inp.writelines(segment_name
+                                   + " w=" + str(wf) + " h=" + str(hf) + " sigma= " + str(sigma)
+                                   + " wx=" + str(wx) + " wy=" + str(wy) + " wz=" + str(wz)
+                                   + " nhinc=" + str(nhinc) + " nwinc=" + str(nwinc) + "\n")
+            out_inp.writelines("\n" + "*Define in and out" + "\n")  # define in and out nodes
+            gate_list = circ_loop["external"]
+            for gates in gate_list:
+                out_inp.writelines("\n" + ".External " + gates[0] + " " + gates[1])
+                out_inp.writelines("\n")
+    out_inp.close()
+
+
 
 
 def write_subcon_seg_input(sub_con_list, input_filename):

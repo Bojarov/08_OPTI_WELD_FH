@@ -1,5 +1,6 @@
 import numpy as np
 import code.geometry_helpers as gh
+from collections import deque
 
 
 # dyn specific code
@@ -229,6 +230,43 @@ def loop_builder(loop_pos, alpha, beta, gamma, w_l, h_l, loop_fil_params, loop_l
         loop_list.append([p, w_l, h_l, alpha, beta, gamma, sigma_l, wf, hf, nhinc_f, nwinc_f])
 
 
+def circular_loop_builder(loop_pos, alpha, beta, gamma, r_l, n_nodes, loop_fil_params, geo_objects, del_con=10 ** (-1)):
+    if not ('circ_pass_loops' in geo_objects):
+        geo_objects["circ_pass_loops"] = []
+
+    R_mat = gh.r_ypr(alpha, beta, gamma)
+    nodes_pos = np.zeros((n_nodes, 3))
+    nodes_pos[:, 0] = r_l * np.cos(np.linspace(0, 2 * np.pi - del_con, n_nodes))
+    nodes_pos[:, 1] = r_l * np.sin(np.linspace(0, 2 * np.pi - del_con, n_nodes))
+    nodes_pos = np.einsum('ij,kj->ik', R_mat, nodes_pos) + np.transpose(loop_pos)
+    nodes_pos = np.transpose(nodes_pos)
+    nodes_pos_shifted = np.vstack((nodes_pos[1:n_nodes, :], nodes_pos[0, :]))
+
+    n_loop = len(geo_objects["circ_pass_loops"])
+
+    node_names = np.chararray((n_nodes,), unicode=True) + "N_CL_" + str(n_loop) + "_" + list(
+        map(str, list(np.arange(n_nodes))))
+
+    segments = [nodes_pos, nodes_pos_shifted]
+
+    segment_names = np.chararray((n_nodes - 1,), unicode=True) + "E_CL_" + list(
+        map(str, list(np.arange(n_nodes - 1)))) + " " + node_names[0:n_nodes - 1] + " " + node_names[1:n_nodes]
+
+    seg_dir = (nodes_pos_shifted - nodes_pos)
+    seg_centers = nodes_pos[:-1] + 0.5 * seg_dir[:-1]
+    seg_w_vec = seg_centers - loop_pos
+
+    seg_params = [seg_centers, seg_w_vec, loop_fil_params]
+
+    gate_list = [[node_names[0], node_names[-1]]]
+
+    circ_loop = {"nodes": nodes_pos, "node_names": list(node_names),
+                 "segments": segments, "segment_names": list(segment_names),
+                 "seg_params": seg_params, "external": gate_list}
+
+    geo_objects["circ_pass_loops"].append(circ_loop)
+
+
 def wire_builder(p1, p2, w_wire, h_wire, phys_params, fil_params, wire_list, external=False):
     sigma = phys_params["sigma"]
     nhinc, nwinc, _ = fil_params
@@ -274,3 +312,37 @@ def plane_builder_angle(p, alpha_p, beta_p, gamma_p, a, b, thick, sigma_p, m_gri
         plane_list.append([q1, q2, q3, thick, m_grid, sigma_p])
     else:
         print("Invalid plane grid, increase number of segments to m_grid>=2.")
+
+
+def plane_builder_loops(p, alpha_p, beta_p, gamma_p, a, b, thick, sigma_p, n_a, n_b, plane_list):
+    """defines a plane made of loops,
+    p is array with the center of weight coordinates
+    alpha_p, beta_p, gamma_p are yaw pitch roll angles of the plane normal
+    initial orientation of the normal, when all angles are zero, is parallel to positive z axis
+    so that edge with length a is parallel to x axis
+    m_grid is the amount of filaments along an edge
+    we use the same amount along the two edges
+    thick is the thickness of the segments and thus the plane thickness
+    """
+    # TODO finish loop plane
+    p1 = np.array([-a / 2, b / 2, 0])
+    p2 = np.array([-a / 2, -b / 2, 0])
+    p3 = np.array([a / 2, -b / 2, 0])
+    p4 = np.array([a / 2, b / 2, 0])
+
+    w_a = b / (n_b + 1)
+    w_b = a / (n_a + 1)
+
+    x = np.linspace((-a + w_b) / 2, (a - w_b) / 2, n_a + 1)
+    y = np.linspace((-b + w_a) / 2, (b - w_a) / 2, n_b + 1)
+    loop_nodes = np.array(np.meshgrid(x, y, [0])).T.reshape(-1, 3)
+
+    exit()
+
+    r_mat = gh.r_ypr(alpha_p, beta_p, gamma_p)  # rotation matrix
+    q1 = p + np.matmul(r_mat, p1)  # rotate the initial points
+    q2 = p + np.matmul(r_mat, p2)
+    q3 = p + np.matmul(r_mat, p3)
+    q4 = p + np.matmul(r_mat, p4)
+
+    plane_list.append([q1, q2, q3, q4, thick, n_a, n_b, sigma_p])
