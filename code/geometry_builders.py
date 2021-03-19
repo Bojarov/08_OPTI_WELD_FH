@@ -230,14 +230,19 @@ def loop_builder(loop_pos, alpha, beta, gamma, w_l, h_l, loop_fil_params, loop_l
         loop_list.append([p, w_l, h_l, alpha, beta, gamma, sigma_l, wf, hf, nhinc_f, nwinc_f])
 
 
-def circular_loop_builder(loop_pos, alpha, beta, gamma, r_l, n_nodes, loop_fil_params, geo_objects, del_con=10 ** (-1)):
+def circular_loop_builder(circ_build_params, geo_objects):
     if not ('circ_pass_loops' in geo_objects):
         geo_objects["circ_pass_loops"] = []
 
+    alpha, beta, gamma = circ_build_params["yaw"], circ_build_params["pitch"], circ_build_params["roll"]
+    r_l, loop_pos, n_nodes = circ_build_params["radius"], circ_build_params["loop_pos"], circ_build_params["node count"]
+    c_d = circ_build_params["contact distance"]
+    loop_fil_params = circ_build_params["filament parameters"]
+
     R_mat = gh.r_ypr(alpha, beta, gamma)
     nodes_pos = np.zeros((n_nodes, 3))
-    nodes_pos[:, 0] = r_l * np.cos(np.linspace(0, 2 * np.pi - del_con, n_nodes))
-    nodes_pos[:, 1] = r_l * np.sin(np.linspace(0, 2 * np.pi - del_con, n_nodes))
+    nodes_pos[:, 0] = r_l * np.cos(np.linspace(0, 2 * np.pi - c_d, n_nodes))
+    nodes_pos[:, 1] = r_l * np.sin(np.linspace(0, 2 * np.pi - c_d, n_nodes))
     nodes_pos = np.einsum('ij,kj->ik', R_mat, nodes_pos) + np.transpose(loop_pos)
     nodes_pos = np.transpose(nodes_pos)
     nodes_pos_shifted = np.vstack((nodes_pos[1:n_nodes, :], nodes_pos[0, :]))
@@ -262,7 +267,7 @@ def circular_loop_builder(loop_pos, alpha, beta, gamma, r_l, n_nodes, loop_fil_p
 
     circ_loop = {"nodes": nodes_pos, "node_names": list(node_names),
                  "segments": segments, "segment_names": list(segment_names),
-                 "seg_params": seg_params, "external": gate_list}
+                 "seg_params": seg_params, "external": gate_list, "build parameters": circ_build_params}
 
     geo_objects["circ_pass_loops"].append(circ_loop)
 

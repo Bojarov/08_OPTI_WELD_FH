@@ -4,7 +4,7 @@ import numpy as np
 
 
 def ZC_mat_extract(geo_objects):
-    n_gates = len(geo_objects["det_loops"] + geo_objects["passive_loops"])
+    n_gates = len(geo_objects["det_loops"] + geo_objects["passive_loops"]+ geo_objects["circ_pass_loops"])
     for wire in geo_objects["wires"]:
         if wire[7]["external"]:
             n_gates += 1

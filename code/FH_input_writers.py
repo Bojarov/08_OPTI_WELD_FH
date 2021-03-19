@@ -46,7 +46,7 @@ def write_node_seg_wire(geo_objects, input_filename):
     """
     writes all defined cuboids into the input file
     """
-    # TODO idea: define wire with multiple subdivs...requires input format as series of node points
+    # TODO idea: define wire with multiple sub divisions...requires input format as series of node points
 
     wire_list = geo_objects['wires']
 
@@ -342,7 +342,15 @@ def write_circ_loop_input(geo_objects, input_filename):
 
             segments, segment_names = circ_loop["segments"], circ_loop["segment_names"]
             seg_centers, seg_w_vec, loop_fil_params = circ_loop["seg_params"]
-            wf, hf, nhinc, nwinc, sigma = loop_fil_params
+
+
+
+            circ_fil_params = circ_loop["build parameters"]["filament parameters"]
+            wf = circ_fil_params["width"]
+            hf = circ_fil_params["height"]
+            nhinc = circ_fil_params["height subs"]
+            nwinc = circ_fil_params["width subs"]
+            sigma = circ_fil_params["conductivity"]
 
             for segment_name in segment_names:
                 seg_ind = segment_names.index(segment_name)

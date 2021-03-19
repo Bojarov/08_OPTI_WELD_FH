@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import code.obs_calc_para_point as ocpp
 import code.obs_calc_j as ocj
-from matplotlib import cm
-from matplotlib import rc, font_manager
+# from matplotlib import cm
+# from matplotlib import rc, font_manager
 import code.obs_calc_analytical as ocana
 import code.obs_calc_b_field as ocb
 import itertools
@@ -351,6 +351,110 @@ def bfz_plot(b_at_det, freqs, det_pos):
     # ax1.plot(det_pos[:, 1], 1/det_pos[:, 1])
     ax3.legend()
     # ax4.legend()
-    #ax5.legend()
-    #ax6.legend()
-    #ax7.legend()
+    # ax5.legend()
+    # ax6.legend()
+    # ax7.legend()
+
+
+#def bfbz_plot(beta_vec, freqs, det_pos):
+def bfbz_plot(b_at_det, beta_vec, freqs, det_pos):
+    n_det, n_f, n_beta, n_dim = np.shape(b_at_det)
+    print(np.shape(b_at_det))
+    fig = plt.figure(constrained_layout=True, figsize=(8, 12))
+    spec = gridspec.GridSpec(ncols=12, nrows=4, figure=fig)
+
+    ax1 = fig.add_subplot(spec[0, 0:3])
+    ax2 = fig.add_subplot(spec[0, 3:6])
+    ax3 = fig.add_subplot(spec[0, 6:9])
+    ax4 = fig.add_subplot(spec[0, 9:12])
+
+    ax5 = fig.add_subplot(spec[1, 0:3])
+    ax6 = fig.add_subplot(spec[1, 3:6])
+    ax7 = fig.add_subplot(spec[1, 6:9])
+    ax8 = fig.add_subplot(spec[1, 9:12])
+
+    ax9 = fig.add_subplot(spec[2, 0:3])
+    ax10 = fig.add_subplot(spec[2, 3:6])
+    ax11 = fig.add_subplot(spec[2, 6:9])
+    ax12 = fig.add_subplot(spec[2, 9:12])
+
+    ax13 = fig.add_subplot(spec[3, 0:3])
+    ax14 = fig.add_subplot(spec[3, 3:6])
+    ax15 = fig.add_subplot(spec[3, 6:9])
+    ax16 = fig.add_subplot(spec[3, 9:12])
+
+    axes1 = [ax1,   ax2,  ax3,  ax4]
+    axes2 = [ax5,   ax6,  ax7,  ax8]
+    axes3 = [ax9,  ax10, ax11, ax12]
+    axes4 = [ax13, ax14, ax15, ax16]
+    axes_list = [axes1, axes2, axes3, axes4]
+    for axes in axes_list:
+        for ax in axes:
+            ax.ticklabel_format(axis='y', style='sci', scilimits=(0, 0), useOffset=None, useLocale=None, useMathText=None)
+            ax.grid()
+    alphas = [r'$\pi/32$', r'$\pi/16$', r'$\pi/8$', r'$\pi/4$']
+    for ax in axes1:
+        ax_ind=axes1.index(ax)
+        ax.title.set_text(r'$\alpha=$'+alphas[ax_ind])
+
+    for ax in axes3:
+        ax.set_ylim(-1, 1.1)
+    for ax in axes4:
+        ax.set_xlabel(r'x[m]')
+        ax.set_ylim(-1, 1.1)
+
+
+    ax1.set_ylabel(r'$|B_x|/|\mu_0 I_W/ 2\pi|$')
+    #ax5.set_ylabel(r'$|B_y|/|\mu_0 I_W/ 2\pi|$')
+    ax5.set_ylabel(r'$|B_z|/|\mu_0 I_W/ 2\pi|$')
+    #ax9.set_ylabel(r'$|B_z/B_x|$')
+    #ax5.set_ylabel(r'$arg(B_x)/\pi$')
+    ax9.set_ylabel(r'$arg(B_x)/\pi$')
+    ax13.set_ylabel(r'$arg(B_z)/\pi$')
+
+    for i in range(n_f):
+        ax1.plot(det_pos[:, 0], abs(b_at_det[:, i, 0, 0]))
+        ax2.plot(det_pos[:, 0], abs(b_at_det[:, i, 1, 0]))
+        ax3.plot(det_pos[:, 0], abs(b_at_det[:, i, 2, 0]))
+        ax4.plot(det_pos[:, 0], abs(b_at_det[:, i, 3, 0]),
+                  label='f=' + str(freqs[i]) + "Hz")
+
+        ax5.plot(det_pos[:, 0], abs(b_at_det[:, i, 0, 2]))
+        ax6.plot(det_pos[:, 0], abs(b_at_det[:, i, 1, 2]))
+        ax7.plot(det_pos[:, 0], abs(b_at_det[:, i, 2, 2]))
+        ax8.plot(det_pos[:, 0], abs(b_at_det[:, i, 3, 2]))
+
+        ax9.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 0, 0])))#, linestyle=':',
+            #label='Bz, f=' + str(freqs[i]) + "Hz")
+        ax10.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 1, 0])))
+        ax11.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 2, 0])))
+        ax12.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 3, 0])))
+
+        ax13.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 0, 2])))
+        ax14.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 1, 2])))
+        ax15.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 2, 2])))
+        ax16.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 3, 2])))
+
+#    ax2.plot(det_pos[:, 0], abs(b_at_det[:, i, 1]))
+#    ax3.plot(det_pos[:, 0], abs(b_at_det[:, i, 2]), label='f=' + str(freqs[i]) + "Hz")
+#
+#    ax4.plot(det_pos[:, 0], abs(b_at_det[:, i, 2]) / abs(b_at_det[:, i, 0]))
+#    ax5.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 0])), linestyle='-',
+#             label='Bx, f=' + str(freqs[i]) + "Hz")
+#    ax6.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 1])), linestyle='--',
+#             label='By, f=' + str(freqs[i]) + "Hz")
+#    ax7.plot(det_pos[:, 0], 1 / np.pi * (np.angle(b_at_det[:, i, 2])), linestyle=':',
+#             label='Bz, f=' + str(freqs[i]) + "Hz")
+#    # print(1 / np.pi * (np.angle(b_at_det[:, i, 0])))
+#    # exit()
+#
+#    # ax5.plot(det_pos[:, 0], 1/np.pi*(np.angle(b_at_det[:, i, 2])-np.angle(b_at_det[:, i, 0])))
+    # ax5.set_ylim(-1, 1.1)
+# ax6.set_ylim(-1, 1.1)
+# ax7.set_ylim(-1, 1.1)
+## ax1.plot(det_pos[:, 1], 1/det_pos[:, 1])
+# ax3.legend()
+# ax4.legend()
+# ax5.legend()
+# ax6.legend()
+    ax4.legend()
