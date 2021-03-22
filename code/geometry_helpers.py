@@ -190,6 +190,7 @@ def det_loop_corners(loop):
     p3 = np.array([-hl / 2, wl / 2, 0])
     p4 = np.array([-hl / 2, -wl / 2, 0])
     p5 = np.array([0.999 * hl / 2, -wl / 2, 0])
+
     r_mat = r_ypr(alpha, beta, gamma)  # rotation matrix
     q1 = p + np.matmul(r_mat, p1)  # rotate the initial points
     q2 = p + np.matmul(r_mat, p2)

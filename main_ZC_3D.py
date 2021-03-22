@@ -136,7 +136,7 @@ def main():
 
     # beta_vec = np.array([np.pi / 32, np.pi / 16, np.pi / 8, np.pi / 4])
     # b_at_det = ocz.b_det_f_beta_Z(beta_vec, phys_params, det_pos, w_l, h_l, det_loop_fil_params, geo_objects)
-    b_at_det = ocz.b_det_f_Z(phys_params, det_pos, w_l, h_l, det_loop_fil_params, geo_objects)
+    #b_at_det = ocz.b_det_f_Z(phys_params, det_pos, w_l, h_l, det_loop_fil_params, geo_objects)
     # print(b_at_det)
     gp3D.ZC_viso(geo_objects, viso_point, viso_dist)
     #op.bfz_plot(b_at_det, freqs, det_pos)

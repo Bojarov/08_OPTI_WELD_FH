@@ -243,21 +243,22 @@ def loop_builder(loop_pos, alpha, beta, gamma, w_l, h_l, loop_fil_params, loop_l
 
 
 def circular_loop_builder(build_params, geo_objects):
-    if not ('circ_pass_loops' in geo_objects):
-        geo_objects['circ_pass_loops'] = []
+    if not ('pass_loops' in geo_objects):
+        geo_objects['pass_loops'] = []
 
     r_l, center_pos, n_nodes = build_params["radius"], build_params['center_pos'], build_params["node count"]
     loop_fil_params = build_params["filament parameters"]
 
     nodes_pos = node_builder(gh.f_clb, build_params)
 
-
+    #list(filter(lambda d: d['type'] in keyValList, exampleSet))
 
     nodes_pos_shifted = np.vstack((nodes_pos[1:n_nodes, :], nodes_pos[0, :]))
 
 
     # TODO get n_loop by counting types of this loop
-    n_loop = len(geo_objects["circ_pass_loops"])
+    n_loop = 0
+    print(len(geo_objects["pass_loops"]))
 
     node_names = np.chararray((n_nodes,), unicode=True) + "N_CL_" + str(n_loop) + "_" + list(
         map(str, list(np.arange(n_nodes))))
@@ -280,17 +281,17 @@ def circular_loop_builder(build_params, geo_objects):
                  "segment_names": list(segment_names), "seg_params": seg_params, "external": gate_list,
                  "build parameters": build_params}
 
-    geo_objects["circ_pass_loops"].append(circ_loop)
+    geo_objects['pass_loops'].append(circ_loop)
 
 
 def rectangle_loop_builder(r_build_params, geo_objects):
-    if not ('r_pass_loops' in geo_objects):
-        geo_objects['r_pass_loops'] = []
+    if not ('pass_loops' in geo_objects):
+        geo_objects['pass_loops'] = []
 
     n_nodes = 5
     a_r, b_r, center_pos = r_build_params['a_r'], r_build_params['b_r'], r_build_params['center_pos']
     fil_params = r_build_params["filament parameters"]
-    n_loop = len(geo_objects['r_pass_loops'])
+    n_loop = len(geo_objects['pass_loops'])
 
     node_names = np.chararray((5,), unicode=True) + "N_RL_" + str(n_loop) + "_" + list(
         map(str, list(np.arange(5))))
@@ -315,7 +316,7 @@ def rectangle_loop_builder(r_build_params, geo_objects):
                  "segment_names": list(segment_names), "seg_params": seg_params, "external": gate_list,
                  "build parameters": r_build_params}
 
-    geo_objects["r_pass_loops"].append(rect_loop)
+    geo_objects["pass_loops"].append(rect_loop)
 
 
 def wire_builder(p1, p2, w_wire, h_wire, phys_params, fil_params, wire_list, external=False):
