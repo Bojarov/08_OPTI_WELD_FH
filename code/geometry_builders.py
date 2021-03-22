@@ -1,7 +1,7 @@
 import numpy as np
 import code.geometry_helpers as gh
 from collections import deque
-
+import pandas as pd
 
 # dyn specific code
 
@@ -250,15 +250,18 @@ def circular_loop_builder(build_params, geo_objects):
     loop_fil_params = build_params["filament parameters"]
 
     nodes_pos = node_builder(gh.f_clb, build_params)
-
-    #list(filter(lambda d: d['type'] in keyValList, exampleSet))
-
     nodes_pos_shifted = np.vstack((nodes_pos[1:n_nodes, :], nodes_pos[0, :]))
 
 
     # TODO get n_loop by counting types of this loop
     n_loop = 0
-    print(len(geo_objects["pass_loops"]))
+    # list(filter(lambda d: d['type'] in keyValList, exampleSet))
+    #print(len(geo_objects["pass_loops"]))
+    #print(len(geo_objects["pass_loops"]))
+    #keyValList = ['type2', 'type3']
+    #pass_list = geo_objects["pass_loops"]
+    #df = pd.DataFrame(pass_list)
+    #df[df['type'].isin(keyValList)]
 
     node_names = np.chararray((n_nodes,), unicode=True) + "N_CL_" + str(n_loop) + "_" + list(
         map(str, list(np.arange(n_nodes))))

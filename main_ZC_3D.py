@@ -76,7 +76,7 @@ viso_point = [0, 1, l_wire / 2]
 viso_dist = 1.5
 
 # dict of lists to gather defined objects
-geo_objects = {"wires": [], "passive_loops": [], "det_loops": []}
+geo_objects = {"wires": [], "det_loops": []}
 
 
 # Todo change system so that object categories get added to the dict when created instead of predefining them
