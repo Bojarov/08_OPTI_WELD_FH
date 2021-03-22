@@ -16,9 +16,10 @@ def run_FH_ZC(phys_params_run, geo_objects, sub_div_auto, message=False):
     FHin.write_node_seg_wire(geo_objects, FH_input_filename)
     FHin.write_det_loop_input(geo_objects, FH_input_filename)
     FHin.write_pass_loop_input(geo_objects, FH_input_filename)
-    FHin.write_plane_input(geo_objects, FH_input_filename)
-    FHin.write_circ_loop_input(geo_objects, FH_input_filename)
+    # FHin.write_plane_input(geo_objects, FH_input_filename)
 
+    if 'circ_pass_loops' in geo_objects:
+        FHin.write_circ_loop_input(geo_objects, FH_input_filename)
 
     FHin.write_end_input(FH_input_filename)
     os.rename('./' + FH_input_filename, './ZC_input_files/' + FH_input_filename)
@@ -28,7 +29,7 @@ def run_FH_ZC(phys_params_run, geo_objects, sub_div_auto, message=False):
         p = subprocess.Popen(['/usr/local/xictools/bin/fasthenry',
                               './ZC_input_files/' + FH_input_filename, '-d', 'grids'],
                              stdout=subprocess.PIPE)
-        #p = subprocess.Popen(['/usr/local/xictools/bin/fasthenry',
+        # p = subprocess.Popen(['/usr/local/xictools/bin/fasthenry',
         #                      './ZC_input_files/' + FH_input_filename],
         #                     stdout=subprocess.PIPE)
 
@@ -45,4 +46,3 @@ def run_FH_ZC(phys_params_run, geo_objects, sub_div_auto, message=False):
         output_fh = p.communicate()
         if message:
             print(output_fh)
-

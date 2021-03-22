@@ -2,6 +2,17 @@ from itertools import product
 import numpy as np
 
 
+def f_rlb(r_build_params):
+    a_r, b_r = r_build_params['a_r'], r_build_params['b_r']
+    c_d = r_build_params['contact distance']
+    w_f = r_build_params["filament parameters"]['width']
+    h_f = r_build_params["filament parameters"]['height']
+    nodes_pos = np.zeros((5, 3))
+    nodes_pos[:, 0] = np.array([- 1, -1, 1, 1, -1 + c_d]) * (a_r - w_f) / 2
+    nodes_pos[:, 1] = np.array([- 1, 1, 1, -1, -1]) * (b_r - w_f) / 2
+
+    return nodes_pos
+
 
 def r_ypr(alpha, beta, gamma):
     """Rotation matrix - yaw/pitch/roll angles
@@ -44,8 +55,10 @@ def phi_def(x, y):
 def dist_2d(x1, y1, x2, y2):
     return np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
+
 def norm(a):
     return np.sqrt(np.sum(a ** 2))
+
 
 def loc_sub_con_coord(sub_con_seg, detect_point):
     """Takes in and out nodes of a sub connection and calculates cylinder
@@ -95,30 +108,30 @@ def cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma, name):
 
 
 def damage_sort_line(r_node, rd_o, rd_i, phi_e, phi_i, phi_s, segment_list,
-                node_list, ns, ne, w, h, nhinc, nwinc, sigma, sigma_damage, name):
-
-    if phi_e > phi_i > phi_s and rd_i < r_node < rd_o :
+                     node_list, ns, ne, w, h, nhinc, nwinc, sigma, sigma_damage, name):
+    if phi_e > phi_i > phi_s and rd_i < r_node < rd_o:
         cuboid(segment_list, node_list, ns, ne, w, h, nhinc,
-                  nwinc, sigma_damage, name)  # defines the cuboids and appends them to list
-    elif phi_s > phi_e > phi_i >= 0 and rd_i < r_node < rd_o :
+               nwinc, sigma_damage, name)  # defines the cuboids and appends them to list
+    elif phi_s > phi_e > phi_i >= 0 and rd_i < r_node < rd_o:
         cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
-    elif phi_e < phi_s < phi_i < 2 * np.pi and rd_i < r_node < rd_o :
+    elif phi_e < phi_s < phi_i < 2 * np.pi and rd_i < r_node < rd_o:
         cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
     else:
         cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma, name)
 
-def damage_sort_patch(r_node, rd_o, rd_i, sub_ind, phi_e, phi_i, phi_s, segment_list,
-                node_list, ns, ne, w, h, nhinc, nwinc, sigma, sigma_damage, name):
 
+def damage_sort_patch(r_node, rd_o, rd_i, sub_ind, phi_e, phi_i, phi_s, segment_list,
+                      node_list, ns, ne, w, h, nhinc, nwinc, sigma, sigma_damage, name):
     if phi_e > phi_i > phi_s and rd_i < r_node < rd_o and sub_ind == 1:
         cuboid(segment_list, node_list, ns, ne, w, h, nhinc,
-                  nwinc, sigma_damage, name)  # defines the cuboids and appends them to list
+               nwinc, sigma_damage, name)  # defines the cuboids and appends them to list
     elif phi_s > phi_e > phi_i >= 0 and rd_i < r_node < rd_o and sub_ind == 1:
         cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
     elif phi_e < phi_s < phi_i < 2 * np.pi and rd_i < r_node < rd_o and sub_ind == 1:
         cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma_damage, name)
     else:
         cuboid(segment_list, node_list, ns, ne, w, h, nhinc, nwinc, sigma, name)
+
 
 # loops
 
@@ -159,7 +172,7 @@ def det_loop_corners(loop):
     p2 = np.array([hl / 2, wl / 2, 0])
     p3 = np.array([-hl / 2, wl / 2, 0])
     p4 = np.array([-hl / 2, -wl / 2, 0])
-    p5 = np.array([0.999 * hl / 2,   -wl / 2, 0])
+    p5 = np.array([0.999 * hl / 2, -wl / 2, 0])
     r_mat = r_ypr(alpha, beta, gamma)  # rotation matrix
     q1 = p + np.matmul(r_mat, p1)  # rotate the initial points
     q2 = p + np.matmul(r_mat, p2)
@@ -167,6 +180,36 @@ def det_loop_corners(loop):
     q4 = p + np.matmul(r_mat, p4)
     q5 = p + np.matmul(r_mat, p5)
     return q1, q2, q3, q4, q5
+
+
+def corners(build_params):
+    """returns the corners of a rectangle with sides a and b
+    when initially (without rotation) side a is parallel to x axis
+    """
+    a = build_params['edge a']
+    b = build_params['edge b']
+    p1 = np.array([-a / 2, - b / 2, 0])
+    p2 = np.array([-a / 2, b / 2, 0])
+    p3 = np.array([a / 2, b / 2, 0])
+    p4 = np.array([a / 2, - b / 2, 0])
+
+    alpha, beta, gamma = build_params["yaw"], build_params["pitch"], build_params["roll"]
+    p = build_params['center_pos']
+
+    r_mat = r_ypr(alpha, beta, gamma)  # rotation matrix
+    q1 = p + np.matmul(r_mat, p1)  # rotate the initial points
+    q2 = p + np.matmul(r_mat, p2)
+    q3 = p + np.matmul(r_mat, p3)
+    q4 = p + np.matmul(r_mat, p4)
+    return q1, q2, q3, q4
+
+def plane_verts(corners):
+    corners = np.array(corners).reshape(4, 3)
+    x = list(corners[:, 0])
+    y = list(corners[:, 1])
+    z = list(corners[:, 2])
+    verts = [list(zip(x, y, z))]
+    return verts
 
 # dyn_mesh specific code
 

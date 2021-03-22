@@ -205,6 +205,18 @@ def sub_connection(s1, s2, phi_con, l_sub_vec, r_sub_vec, sub_con_list,
 
 
 # ZC code
+
+def node_builder(my_func, build_params):
+    alpha, beta, gamma = build_params['yaw'], build_params['pitch'], build_params['roll']
+    center_pos = build_params['center_pos']
+    R_mat = gh.r_ypr(alpha, beta, gamma)
+    nodes_pos = my_func(build_params)
+    nodes_pos = np.einsum('ij,kj->ik', R_mat, nodes_pos) + np.transpose(center_pos)
+    nodes_pos = np.transpose(nodes_pos)
+
+    return nodes_pos
+
+
 def det_loop_builder(det_pos, i_xyz, w_l, h_l, loop_fil_params, loop_list):
     # if i_xyz == 0:
     alpha, beta, gamma = np.array([0, np.pi / 2, 0])
@@ -230,17 +242,19 @@ def loop_builder(loop_pos, alpha, beta, gamma, w_l, h_l, loop_fil_params, loop_l
         loop_list.append([p, w_l, h_l, alpha, beta, gamma, sigma_l, wf, hf, nhinc_f, nwinc_f])
 
 
-def circular_loop_builder(circ_build_params, geo_objects):
+def circular_loop_builder(build_params, geo_objects):
     if not ('circ_pass_loops' in geo_objects):
-        geo_objects["circ_pass_loops"] = []
+        geo_objects['circ_pass_loops'] = []
 
-    alpha, beta, gamma = circ_build_params["yaw"], circ_build_params["pitch"], circ_build_params["roll"]
-    r_l, loop_pos, n_nodes = circ_build_params["radius"], circ_build_params["loop_pos"], circ_build_params["node count"]
-    c_d = circ_build_params["contact distance"]
-    loop_fil_params = circ_build_params["filament parameters"]
+    alpha, beta, gamma = build_params["yaw"], build_params["pitch"], build_params["roll"]
+    r_l, loop_pos, n_nodes = build_params["radius"], build_params['center_pos'], build_params["node count"]
+    c_d = build_params["contact distance"]
+    loop_fil_params = build_params["filament parameters"]
 
     R_mat = gh.r_ypr(alpha, beta, gamma)
     nodes_pos = np.zeros((n_nodes, 3))
+    # TODO change design so that nodes_pos has a method that builds these from the geometry params to reuse it for others
+
     nodes_pos[:, 0] = r_l * np.cos(np.linspace(0, 2 * np.pi - c_d, n_nodes))
     nodes_pos[:, 1] = r_l * np.sin(np.linspace(0, 2 * np.pi - c_d, n_nodes))
     nodes_pos = np.einsum('ij,kj->ik', R_mat, nodes_pos) + np.transpose(loop_pos)
@@ -264,36 +278,59 @@ def circular_loop_builder(circ_build_params, geo_objects):
     seg_params = [seg_centers, seg_w_vec, loop_fil_params]
 
     gate_list = [[node_names[0], node_names[-1]]]
-
-    circ_loop = {"nodes": nodes_pos, "node_names": list(node_names),
-                 "segments": segments, "segment_names": list(segment_names),
-                 "seg_params": seg_params, "external": gate_list, "build parameters": circ_build_params}
+    # TODO think if category "passive loops" or only "loops" is enough and the rest can be done by keyword "type"
+    circ_loop = {"name": 'CL_' + str(n_loop), "type": "circular loop",
+                 "super object": None, "nodes": nodes_pos, "node_names": list(node_names), "segments": segments,
+                 "segment_names": list(segment_names), "seg_params": seg_params, "external": gate_list,
+                 "build parameters": build_params}
 
     geo_objects["circ_pass_loops"].append(circ_loop)
 
 
+def rectangle_loop_builder(r_build_params, geo_objects):
+    if not ('r_pass_loops' in geo_objects):
+        geo_objects['r_pass_loops'] = []
+
+    n_nodes = 5
+    a_r, b_r, center_pos = r_build_params['a_r'], r_build_params['b_r'], r_build_params['center_pos']
+    fil_params = r_build_params["filament parameters"]
+    n_loop = len(geo_objects['r_pass_loops'])
+
+    node_names = np.chararray((5,), unicode=True) + "N_RL_" + str(n_loop) + "_" + list(
+        map(str, list(np.arange(5))))
+    nodes_pos = node_builder(gh.f_rlb, r_build_params)
+
+    nodes_pos_shifted = np.vstack((nodes_pos[1:n_nodes, :], nodes_pos[0, :]))
+
+    segments = [nodes_pos, nodes_pos_shifted]
+    segment_names = np.chararray((n_nodes - 1,), unicode=True) + "E_RL_" + list(
+        map(str, list(np.arange(n_nodes - 1)))) + " " + node_names[0:n_nodes - 1] + " " + node_names[1:n_nodes]
+
+    seg_dir = (nodes_pos_shifted - nodes_pos)
+    seg_centers = nodes_pos[:-1] + 0.5 * seg_dir[:-1]
+    seg_w_vec = seg_centers - center_pos
+
+    seg_params = [seg_centers, seg_w_vec, fil_params]
+
+    gate_list = [[node_names[0], node_names[-1]]]
+
+    rect_loop = {"name": 'RL_' + str(n_loop), "type": "rectangle loop",
+                 "super object": None, "nodes": nodes_pos, "node_names": list(node_names), "segments": segments,
+                 "segment_names": list(segment_names), "seg_params": seg_params, "external": gate_list,
+                 "build parameters": r_build_params}
+
+    geo_objects["r_pass_loops"].append(rect_loop)
+
+
 def wire_builder(p1, p2, w_wire, h_wire, phys_params, fil_params, wire_list, external=False):
+    # TODO change wire def to the style of the circular loop
+
     sigma = phys_params["sigma"]
     nhinc, nwinc, _ = fil_params
     name = {"Node_1": None, "Node_2": None, "Segment": None, "external": external}
     wire_list.append([p1, p2, w_wire, h_wire, nhinc, nwinc, sigma, name])
 
 
-def plane_builder(p1, p2, p3, thick, sigma_p, m_grid, plane_list):
-    """defines a plane made of segments,
-    P1, P2, P3 are the three corners of the plane
-    m_grid is the amount of filaments forming the P1-P2 edge
-    we use the same amount along the P2-P3 edge
-    the two lines must be in a right angle!
-    thick is the thickness of the segments and thus the plane thickness
-    """
-    if m_grid >= 2:
-        plane_list.append([p1, p2, p3, thick, m_grid, sigma_p])
-    else:
-        print("Invalid plane grid, increase number of segments to m_grid>=2.")
-
-
-# def plane_builder_new(p1, p2, p3, thick, sigma_p, m_grid, plane_list):
 def plane_builder_angle(p, alpha_p, beta_p, gamma_p, a, b, thick, sigma_p, m_grid, plane_list):
     """defines a plane made of segments,
     p is array with the center of weight coordinates
@@ -319,35 +356,65 @@ def plane_builder_angle(p, alpha_p, beta_p, gamma_p, a, b, thick, sigma_p, m_gri
         print("Invalid plane grid, increase number of segments to m_grid>=2.")
 
 
-def plane_builder_loops(p, alpha_p, beta_p, gamma_p, a, b, thick, sigma_p, n_a, n_b, plane_list):
+def loop_plane_builder(build_params, geo_objects):
     """defines a plane made of loops,
     p is array with the center of weight coordinates
     alpha_p, beta_p, gamma_p are yaw pitch roll angles of the plane normal
     initial orientation of the normal, when all angles are zero, is parallel to positive z axis
     so that edge with length a is parallel to x axis
-    m_grid is the amount of filaments along an edge
-    we use the same amount along the two edges
+    n_loops is the amount of loops the plane is made of, each loop has same filament parameters
     thick is the thickness of the segments and thus the plane thickness
     """
-    # TODO finish loop plane
-    p1 = np.array([-a / 2, b / 2, 0])
-    p2 = np.array([-a / 2, -b / 2, 0])
-    p3 = np.array([a / 2, -b / 2, 0])
-    p4 = np.array([a / 2, b / 2, 0])
 
-    w_a = b / (n_b + 1)
-    w_b = a / (n_a + 1)
+    if not ('planes' in geo_objects):
+        geo_objects['planes'] = []
 
-    x = np.linspace((-a + w_b) / 2, (a - w_b) / 2, n_a + 1)
-    y = np.linspace((-b + w_a) / 2, (b - w_a) / 2, n_b + 1)
-    loop_nodes = np.array(np.meshgrid(x, y, [0])).T.reshape(-1, 3)
 
-    exit()
 
-    r_mat = gh.r_ypr(alpha_p, beta_p, gamma_p)  # rotation matrix
-    q1 = p + np.matmul(r_mat, p1)  # rotate the initial points
-    q2 = p + np.matmul(r_mat, p2)
-    q3 = p + np.matmul(r_mat, p3)
-    q4 = p + np.matmul(r_mat, p4)
+    plane_pos = build_params["center_pos"]
+    alpha, beta, gamma = build_params["yaw"], build_params["pitch"], build_params["roll"]
+    cd = build_params["contact distance"]
+    a, b = build_params["edge a"], build_params["edge b"]
+    n_loops = build_params["loop count"]
 
-    plane_list.append([q1, q2, q3, q4, thick, n_a, n_b, sigma_p])
+    if a >= b:
+        w_f = 0.5 * b / n_loops
+        a_loops = a - 2 * w_f * np.arange(n_loops)
+        b_loops = b - 2 * w_f * np.arange(n_loops)
+
+    else:
+        w_f = 0.5 * a / n_loops
+        a_loops = a - w_f * np.arange(n_loops)
+        b_loops = b - w_f * np.arange(n_loops)
+
+    for i in range(n_loops):
+        r_fil_params = {"width": w_f, "height": 0.002,
+                        "width subs": 1, "height subs": 1, "conductivity": 2.5 * 10 ** 6}
+        r_build_params = {'center_pos': plane_pos, "yaw": alpha, "pitch": beta, "roll": gamma,
+                          'a_r': a_loops[i], 'b_r': b_loops[i],
+                          'node count': 5, 'contact distance': cd, "filament parameters": r_fil_params}
+
+        rectangle_loop_builder(r_build_params, geo_objects)
+
+    plane = {'build_params': build_params}
+
+    geo_objects['planes'].append(plane)
+
+
+
+    # TODO plane fil params depend on the definition of the plane thickness and
+    #plane_fil_params = plane_build_params['filament parameters']
+
+    # 1. build loops to fill plane from plane params
+    # plane rotations are done in the loops!
+
+    # 2. save plane characteristics to a dictionary
+
+    # TODO 3. think if necessary to label the impedance entries in Z_mat so
+    #   that field contributions from different objects can be separated!
+
+    #plane = {"build parameters": plane_build_params}
+
+
+
+

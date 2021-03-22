@@ -326,9 +326,9 @@ def write_circ_loop_input(geo_objects, input_filename):
     out_inp = open(input_filename, "a")
     if len(loop_list) > 0:
         for loop_ind in range(len(loop_list)):
-            circ_loop = geo_objects["circ_pass_loops"][loop_ind]
+            loop = geo_objects["circ_pass_loops"][loop_ind]
 
-            nodes_pos, node_names = circ_loop["nodes"], circ_loop["node_names"]
+            nodes_pos, node_names = loop["nodes"], loop["node_names"]
 
             out_inp.writelines("\n" + "*The nodes and segments of passive loops # " + str(loop_ind) + " \n")
 
@@ -340,12 +340,10 @@ def write_circ_loop_input(geo_objects, input_filename):
                                    + " y=" + str(nodes_pos[node_ind, 1])
                                    + " z=" + str(nodes_pos[node_ind, 2]) + "\n")
 
-            segments, segment_names = circ_loop["segments"], circ_loop["segment_names"]
-            seg_centers, seg_w_vec, loop_fil_params = circ_loop["seg_params"]
+            segments, segment_names = loop["segments"], loop["segment_names"]
+            seg_centers, seg_w_vec, loop_fil_params = loop["seg_params"]
 
-
-
-            circ_fil_params = circ_loop["build parameters"]["filament parameters"]
+            circ_fil_params = loop["build parameters"]["filament parameters"]
             wf = circ_fil_params["width"]
             hf = circ_fil_params["height"]
             nhinc = circ_fil_params["height subs"]
@@ -362,13 +360,11 @@ def write_circ_loop_input(geo_objects, input_filename):
                                    + " wx=" + str(wx) + " wy=" + str(wy) + " wz=" + str(wz)
                                    + " nhinc=" + str(nhinc) + " nwinc=" + str(nwinc) + "\n")
             out_inp.writelines("\n" + "*Define in and out" + "\n")  # define in and out nodes
-            gate_list = circ_loop["external"]
+            gate_list = loop["external"]
             for gates in gate_list:
                 out_inp.writelines("\n" + ".External " + gates[0] + " " + gates[1])
                 out_inp.writelines("\n")
     out_inp.close()
-
-
 
 
 def write_subcon_seg_input(sub_con_list, input_filename):
@@ -389,6 +385,8 @@ def write_subcon_seg_input(sub_con_list, input_filename):
             + " nhinc=" + str(sub_con[4]) + " nwinc=" + str(sub_con[5]) + "\n")
 
     out_inp.close()
+
+
 
 
 def write_plane_input(geo_objects, input_filename):

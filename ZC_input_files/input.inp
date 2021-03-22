@@ -30,8 +30,6 @@ E_DL_0_3 N_DL_0_3 N_DL_0_4 w=0.001 h=0.001 sigma= 10.0 nhinc=1 nwinc=1
 
 .External N_DL_0_0 N_DL_0_4
 
-*The planes defined...
-
 *The nodes and segments of passive loops # 0 
 N_CL_0_0 x=0.5983883476483185 y=1.0 z=14.91161165235168
 N_CL_0_1 x=0.5973004860640295 y=1.0195512215978542 z=14.912699513935971
