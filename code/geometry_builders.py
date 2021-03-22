@@ -246,21 +246,17 @@ def circular_loop_builder(build_params, geo_objects):
     if not ('circ_pass_loops' in geo_objects):
         geo_objects['circ_pass_loops'] = []
 
-    alpha, beta, gamma = build_params["yaw"], build_params["pitch"], build_params["roll"]
-    r_l, loop_pos, n_nodes = build_params["radius"], build_params['center_pos'], build_params["node count"]
-    c_d = build_params["contact distance"]
+    r_l, center_pos, n_nodes = build_params["radius"], build_params['center_pos'], build_params["node count"]
     loop_fil_params = build_params["filament parameters"]
 
-    R_mat = gh.r_ypr(alpha, beta, gamma)
-    nodes_pos = np.zeros((n_nodes, 3))
-    # TODO change design so that nodes_pos has a method that builds these from the geometry params to reuse it for others
+    nodes_pos = node_builder(gh.f_clb, build_params)
 
-    nodes_pos[:, 0] = r_l * np.cos(np.linspace(0, 2 * np.pi - c_d, n_nodes))
-    nodes_pos[:, 1] = r_l * np.sin(np.linspace(0, 2 * np.pi - c_d, n_nodes))
-    nodes_pos = np.einsum('ij,kj->ik', R_mat, nodes_pos) + np.transpose(loop_pos)
-    nodes_pos = np.transpose(nodes_pos)
+
+
     nodes_pos_shifted = np.vstack((nodes_pos[1:n_nodes, :], nodes_pos[0, :]))
 
+
+    # TODO get n_loop by counting types of this loop
     n_loop = len(geo_objects["circ_pass_loops"])
 
     node_names = np.chararray((n_nodes,), unicode=True) + "N_CL_" + str(n_loop) + "_" + list(
@@ -273,7 +269,7 @@ def circular_loop_builder(build_params, geo_objects):
 
     seg_dir = (nodes_pos_shifted - nodes_pos)
     seg_centers = nodes_pos[:-1] + 0.5 * seg_dir[:-1]
-    seg_w_vec = seg_centers - loop_pos
+    seg_w_vec = seg_centers - center_pos
 
     seg_params = [seg_centers, seg_w_vec, loop_fil_params]
 

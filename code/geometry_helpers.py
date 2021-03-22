@@ -2,14 +2,30 @@ from itertools import product
 import numpy as np
 
 
-def f_rlb(r_build_params):
-    a_r, b_r = r_build_params['a_r'], r_build_params['b_r']
-    c_d = r_build_params['contact distance']
-    w_f = r_build_params["filament parameters"]['width']
-    h_f = r_build_params["filament parameters"]['height']
+def f_rlb(build_params):
+    """function for the node building in case of rectangle loop
+    """
+    a_r, b_r = build_params['a_r'], build_params['b_r']
+    c_d = build_params['contact distance']
+    w_f = build_params["filament parameters"]['width']
+    # h_f = build_params["filament parameters"]['height']
     nodes_pos = np.zeros((5, 3))
     nodes_pos[:, 0] = np.array([- 1, -1, 1, 1, -1 + c_d]) * (a_r - w_f) / 2
     nodes_pos[:, 1] = np.array([- 1, 1, 1, -1, -1]) * (b_r - w_f) / 2
+
+    return nodes_pos
+
+
+def f_clb(build_params):
+    """function for the node building in case of circle loop
+    """
+    r_l, loop_pos, n_nodes = build_params["radius"], build_params['center_pos'], build_params["node count"]
+    c_d = build_params['contact distance']
+    w_f = build_params["filament parameters"]['width']
+    # h_f = build_params["filament parameters"]['height']
+    nodes_pos = np.zeros((n_nodes, 3))
+    nodes_pos[:, 0] = r_l * np.cos(np.linspace(0, 2 * np.pi - c_d, n_nodes))
+    nodes_pos[:, 1] = r_l * np.sin(np.linspace(0, 2 * np.pi - c_d, n_nodes))
 
     return nodes_pos
 
@@ -164,6 +180,7 @@ def loop_corners(loop):
     q4 = p + np.matmul(r_mat, p4)
     return q1, q2, q3, q4
 
+
 def det_loop_corners(loop):
     """returns the node points of a detector loop
     """
@@ -203,6 +220,7 @@ def corners(build_params):
     q4 = p + np.matmul(r_mat, p4)
     return q1, q2, q3, q4
 
+
 def plane_verts(corners):
     corners = np.array(corners).reshape(4, 3)
     x = list(corners[:, 0])
@@ -210,6 +228,7 @@ def plane_verts(corners):
     z = list(corners[:, 2])
     verts = [list(zip(x, y, z))]
     return verts
+
 
 # dyn_mesh specific code
 

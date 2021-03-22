@@ -138,7 +138,7 @@ def main():
     # b_at_det = ocz.b_det_f_beta_Z(beta_vec, phys_params, det_pos, w_l, h_l, det_loop_fil_params, geo_objects)
     b_at_det = ocz.b_det_f_Z(phys_params, det_pos, w_l, h_l, det_loop_fil_params, geo_objects)
     # print(b_at_det)
-    #gp3D.ZC_viso(geo_objects, viso_point, viso_dist)
+    gp3D.ZC_viso(geo_objects, viso_point, viso_dist)
     #op.bfz_plot(b_at_det, freqs, det_pos)
     # op.bfbz_plot(b_at_det, beta_vec, freqs, det_pos)
 
