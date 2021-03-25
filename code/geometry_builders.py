@@ -3,6 +3,7 @@ import code.geometry_helpers as gh
 from collections import deque
 import pandas as pd
 
+
 # dyn specific code
 
 def node_points_filaments_dyn(ro, ri, params, damage_params, filament_params,
@@ -252,16 +253,8 @@ def circular_loop_builder(build_params, geo_objects):
     nodes_pos = node_builder(gh.f_clb, build_params)
     nodes_pos_shifted = np.vstack((nodes_pos[1:n_nodes, :], nodes_pos[0, :]))
 
-
-    # TODO get n_loop by counting types of this loop
-    n_loop = 0
-    # list(filter(lambda d: d['type'] in keyValList, exampleSet))
-    #print(len(geo_objects["pass_loops"]))
-    #print(len(geo_objects["pass_loops"]))
-    #keyValList = ['type2', 'type3']
-    #pass_list = geo_objects["pass_loops"]
-    #df = pd.DataFrame(pass_list)
-    #df[df['type'].isin(keyValList)]
+    # TODO change n_loop by counting types of this loop
+    n_loop = len(geo_objects["pass_loops"])
 
     node_names = np.chararray((n_nodes,), unicode=True) + "N_CL_" + str(n_loop) + "_" + list(
         map(str, list(np.arange(n_nodes))))
@@ -369,13 +362,12 @@ def loop_plane_builder(build_params, geo_objects):
     if not ('planes' in geo_objects):
         geo_objects['planes'] = []
 
-
-
     plane_pos = build_params["center_pos"]
     alpha, beta, gamma = build_params["yaw"], build_params["pitch"], build_params["roll"]
     cd = build_params["contact distance"]
     a, b = build_params["edge a"], build_params["edge b"]
     n_loops = build_params["loop count"]
+    plane_name = 'P_' + str(len(geo_objects['planes']))
 
     if a >= b:
         w_f = 0.5 * b / n_loops
@@ -393,28 +385,18 @@ def loop_plane_builder(build_params, geo_objects):
         r_build_params = {'center_pos': plane_pos, "yaw": alpha, "pitch": beta, "roll": gamma,
                           'a_r': a_loops[i], 'b_r': b_loops[i],
                           'node count': 5, 'contact distance': cd, "filament parameters": r_fil_params}
-
         rectangle_loop_builder(r_build_params, geo_objects)
+        geo_objects['pass_loops'][i]['super object'] = plane_name
 
-    plane = {'build_params': build_params}
+    plane = {'name': plane_name, 'build_params': build_params, 'type': 'loop plane'}
 
     geo_objects['planes'].append(plane)
 
-
-
     # TODO plane fil params depend on the definition of the plane thickness and
-    #plane_fil_params = plane_build_params['filament parameters']
-
-    # 1. build loops to fill plane from plane params
-    # plane rotations are done in the loops!
+    # plane_fil_params = plane_build_params['filament parameters']
 
     # 2. save plane characteristics to a dictionary
 
     # TODO 3. think if necessary to label the impedance entries in Z_mat so
     #   that field contributions from different objects can be separated!
-
-    #plane = {"build parameters": plane_build_params}
-
-
-
 
