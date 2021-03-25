@@ -21,13 +21,27 @@ def f_clb(build_params):
     """
     r_l, loop_pos, n_nodes = build_params["radius"], build_params['center_pos'], build_params["node count"]
     c_d = build_params['contact distance']
-    w_f = build_params["filament parameters"]['width']
+    # w_f = build_params["filament parameters"]['width']
     # h_f = build_params["filament parameters"]['height']
     nodes_pos = np.zeros((n_nodes, 3))
     nodes_pos[:, 0] = r_l * np.cos(np.linspace(0, 2 * np.pi - c_d, n_nodes))
     nodes_pos[:, 1] = r_l * np.sin(np.linspace(0, 2 * np.pi - c_d, n_nodes))
 
     return nodes_pos
+
+
+def f_wb(build_params):
+    """function for building nodes of a straight wire
+    """
+    start_point, end_point, n_nodes = build_params["start_point"], build_params['end_point'], build_params["node count"]
+    con_vec = end_point - start_point
+    wire_length = norm(con_vec)
+    dir_vec = (con_vec / wire_length).reshape(1, 3)
+    nodes_pos = start_point + np.linspace(0, wire_length, n_nodes).reshape(n_nodes, 1) * dir_vec
+
+    return nodes_pos
+
+
 
 
 def r_ypr(alpha, beta, gamma):

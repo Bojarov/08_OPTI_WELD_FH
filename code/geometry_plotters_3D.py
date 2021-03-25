@@ -13,6 +13,7 @@ def data_for_cylinder_along_z(center_x, center_y, radius, height_z):
     y_grid = radius * np.sin(theta_grid) + center_y
     return x_grid, y_grid, z_grid
 
+
 def ZC_viso(geo_objects, view_pos, dist):
     x, y, z = view_pos
 
@@ -26,20 +27,7 @@ def ZC_viso(geo_objects, view_pos, dist):
     ax.set_ylim3d(y - dist, y + dist)
     ax.set_zlim3d(z - dist, z + dist)
 
-    passive_loop_list = geo_objects['pass_loops']
     det_loop_list = geo_objects['det_loops']
-    wire_list = geo_objects['wires']
-    #geo_objects['circ_pass_loops']
-
-    #r_loops = geo_objects['r_pass_loops']
-
-    #for loop in passive_loop_list:
-    #    # plot the node points
-    #    Q_list = list(gh.det_loop_corners(loop))
-    #    ax.scatter(*zip(*Q_list), color='blue', s=2)
-    #    # connect the nodes to represent the loop
-    #    ax.plot(*zip(*Q_list), color='blue')
-    #    ax.scatter(Q_list[-1][0], Q_list[-1][1], Q_list[-1][2], color='black', marker='x', s=2)
 
     for loop in det_loop_list:
         # plot the node points
@@ -49,11 +37,14 @@ def ZC_viso(geo_objects, view_pos, dist):
         ax.plot(*zip(*Q_list), color='orange')
         ax.scatter(Q_list[-1][0], Q_list[-1][1], Q_list[-1][2], color='black', marker='x', s=5)
 
-    for wire in wire_list:
-        p1, p2, w_wire, h_wire, nhinc, nwinc, sigma, name = wire
-        Q_list = list([p1, p2])
-        ax.scatter(*zip(*Q_list), color='g')
-        ax.plot(*zip(*Q_list), color='g')
+    if 'wires' in geo_objects:
+        wire_list = geo_objects['wires']
+        for wire in wire_list:
+            nodes = wire["nodes"]
+            ax.scatter(nodes[1:-1, 0], nodes[1:-1, 1], nodes[1:-1, 2], color='g')
+            ax.plot(nodes[:, 0], nodes[:, 1], nodes[:, 2], color='g')
+            ax.scatter(nodes[0, 0], nodes[0, 1], nodes[0, 2], color='r')
+            ax.scatter(nodes[-1, 0], nodes[-1, 1], nodes[-1, 2], color='r')
 
     if 'planes' in geo_objects:
         plane_list = geo_objects['planes']
@@ -75,6 +66,3 @@ def ZC_viso(geo_objects, view_pos, dist):
             ax.plot(nodes[:, 0], nodes[:, 1], nodes[:, 2], color='g')
             ax.scatter(nodes[0, 0], nodes[0, 1], nodes[0, 2], color='r')
             ax.scatter(nodes[-1, 0], nodes[-1, 1], nodes[-1, 2], color='r')
-    # TODO add segment viso if requested
-
-

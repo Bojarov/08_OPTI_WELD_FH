@@ -4,10 +4,8 @@ import numpy as np
 
 
 def ZC_mat_extract(geo_objects):
-    n_gates = len(geo_objects["det_loops"]) + len(geo_objects["pass_loops"])
-    for wire in geo_objects["wires"]:
-        if wire[7]["external"]:
-            n_gates += 1
+    #TODO works for now, but I would like to get the number of gates from the keys of the dicts
+    n_gates = len(geo_objects["det_loops"]) + len(geo_objects["pass_loops"]) + len(geo_objects["wires"])
 
     if os.path.exists('./Zc.mat'):
         Z_mat = np.zeros((n_gates, n_gates), dtype=complex)

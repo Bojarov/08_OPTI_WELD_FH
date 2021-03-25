@@ -3,8 +3,8 @@ import code.geometry_builders as gb
 
 
 def exp_00():
-    """ This is the old style where the coord system is adjusted to cylindrical symmetry """
-
+    """ This is the old style where the coord system is oriented to the standard
+     when cylindrical symmetry is present"""
 
     # Physical FH parameters
 
@@ -121,18 +121,14 @@ def exp_00():
 
 def eddy_02(geo_objects):
     """Here define the objects created for the experiment"""
+    wire = geo_objects['wires'][0]
+    wire_center = (wire["build parameters"]['end_point'] + wire["build parameters"]['start_point']) / 2
+    plane_center = wire_center + np.array([0.0, 0.0, 0.5])
 
-
-    l_wire = 15     #TODO:  clean up this mess and introduce wire as dictionary
     r_fil_params = {"width": 0.05, "height": 0.002,
                     "width subs": 1, "height subs": 1, "conductivity": 2.5 * 10 ** 6}
 
-    r_build_params = {'center_pos': np.array([0.0, 0.0, l_wire / 2]).reshape(1, 3), "yaw": 0.0 * np.pi,
-                      "pitch": 0.0 * np.pi,
-                      "roll": 0.0 * np.pi, 'a_r': 0.5, 'b_r': 0.5, "node count": 5, "contact distance": 10 ** (-3),
-                      "filament parameters": r_fil_params}
-
-    plane_build_params = {'center_pos': np.array([0.0, 0.0, l_wire / 2]).reshape(1, 3),
+    plane_build_params = {'center_pos': plane_center.reshape(1, 3),
                           "yaw": 0.0 * np.pi, "pitch": 0.0 * np.pi, "roll": 0.0 * np.pi,
                           'edge a': 2.0, 'edge b': 1.0, "loop count": 5, "contact distance": 10 ** (-3),
                           "filament parameters": r_fil_params}

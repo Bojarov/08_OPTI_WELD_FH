@@ -20,7 +20,6 @@ def run_FH_ZC(phys_params_run, geo_objects, sub_div_auto, message=False):
 
     FHin.write_end_input(FH_input_filename)
     os.rename('./' + FH_input_filename, './ZC_input_files/' + FH_input_filename)
-
     # Run FASTHENRY
     if sub_div_auto:
         p = subprocess.Popen(['/usr/local/xictools/bin/fasthenry',

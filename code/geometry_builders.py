@@ -207,13 +207,16 @@ def sub_connection(s1, s2, phi_con, l_sub_vec, r_sub_vec, sub_con_list,
 
 # ZC code
 
-def node_builder(my_func, build_params):
-    alpha, beta, gamma = build_params['yaw'], build_params['pitch'], build_params['roll']
-    center_pos = build_params['center_pos']
-    R_mat = gh.r_ypr(alpha, beta, gamma)
-    nodes_pos = my_func(build_params)
-    nodes_pos = np.einsum('ij,kj->ik', R_mat, nodes_pos) + np.transpose(center_pos)
-    nodes_pos = np.transpose(nodes_pos)
+def node_builder(my_func, build_params, rotation=True):
+    if rotation:
+        alpha, beta, gamma = build_params['yaw'], build_params['pitch'], build_params['roll']
+        center_pos = build_params['center_pos']
+        R_mat = gh.r_ypr(alpha, beta, gamma)
+        nodes_pos = my_func(build_params)
+        nodes_pos = np.einsum('ij,kj->ik', R_mat, nodes_pos) + np.transpose(center_pos)
+        nodes_pos = np.transpose(nodes_pos)
+    else:
+        nodes_pos = my_func(build_params)
 
     return nodes_pos
 
@@ -324,6 +327,46 @@ def wire_builder(p1, p2, w_wire, h_wire, phys_params, fil_params, wire_list, ext
     wire_list.append([p1, p2, w_wire, h_wire, nhinc, nwinc, sigma, name])
 
 
+def wire_builder_new(build_params, geo_objects):
+    if not ('wires' in geo_objects):
+        geo_objects['wires'] = []
+
+    start_point, end_point, n_nodes = build_params["start_point"], build_params['end_point'], build_params["node count"]
+    wire_fil_params = build_params["filament parameters"]
+
+    nodes_pos = node_builder(gh.f_wb, build_params, rotation=False)
+    nodes_pos_shifted = nodes_pos[1:n_nodes, :]
+
+    n_wire = len(geo_objects["wires"])
+
+    node_names = np.chararray((n_nodes,), unicode=True) + "N_W_" + str(n_wire) + "_" + list(
+        map(str, list(np.arange(n_nodes))))
+
+    segments = [nodes_pos[0:n_nodes-1], nodes_pos_shifted]
+
+    segment_names = np.chararray((n_nodes - 1,), unicode=True) + "E_W_" + list(
+        map(str, list(np.arange(n_nodes - 1)))) + " " + node_names[0:n_nodes - 1] + " " + node_names[1:n_nodes]
+
+    #print(nodes_pos)
+    #print(nodes_pos[0:-1,:])
+    #print(nodes_pos_shifted)
+    seg_dir = (nodes_pos_shifted - nodes_pos[0:-1, :])
+    #exit()
+
+    seg_centers = nodes_pos[0:-1, :] + 0.5 * seg_dir
+    seg_w_vec = seg_centers
+
+    seg_params = [seg_centers, seg_w_vec, wire_fil_params]
+
+    gate_list = [[node_names[0], node_names[-1]]]
+    wire = {"name": 'W_' + str(n_wire), "type": "wire",
+                 "super object": None, "nodes": nodes_pos, "node_names": list(node_names), "segments": segments,
+                 "segment_names": list(segment_names), "seg_params": seg_params, "external": gate_list,
+                 "build parameters": build_params}
+
+    geo_objects['wires'].append(wire)
+
+
 def plane_builder_angle(p, alpha_p, beta_p, gamma_p, a, b, thick, sigma_p, m_grid, plane_list):
     """defines a plane made of segments,
     p is array with the center of weight coordinates
@@ -399,4 +442,3 @@ def loop_plane_builder(build_params, geo_objects):
 
     # TODO 3. think if necessary to label the impedance entries in Z_mat so
     #   that field contributions from different objects can be separated!
-

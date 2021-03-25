@@ -8,6 +8,8 @@ import code.obs_calc_ZC as ocz
 import code.observable_plotters as op
 import code.data_load_empit as dle
 import code.experiment_notebooks as en
+import code.geometry_helpers as gh
+import code.geometry_builders as gb
 
 np.set_printoptions(linewidth=200)
 
@@ -41,16 +43,11 @@ h_wire = 0.1
 # Detector positions
 n_det = 3  # number of detector loops
 w_det = 1.3  # width of the detector array
-det_pos = np.zeros((n_det, 9))
+det_pos = np.zeros((n_det, 3))
 
-det_pos[:, 0] = np.linspace(-w_det / 2, w_det / 2, n_det)
-# det_pos[:, 0] = np.linspace(0, w_det / 2, n_det)
-det_pos[:, 1] = 1.0 * np.ones(n_det)
-det_pos[:, 2] = l_wire / 2 * np.ones(n_det)
-
-# det_pos[:, 0] = 0.0 * np.ones(n_det)
-# det_pos[:, 1] = np.linspace(0.2, 1.0, n_det)
-# det_pos[:, 2] = l_wire/2 * np.ones(n_det)
+det_pos[:, 0] = 0 * np.ones(n_det)
+det_pos[:, 1] = np.linspace(-w_det / 2, w_det / 2, n_det)
+det_pos[:, 2] = 1.0 * np.ones(n_det)
 
 # Detector loop dimensions and direction of measured field component
 i_xyz = 0  # direction index 0...x, 1...y, 2...z
@@ -65,28 +62,34 @@ det_loop_fil_params = [wf, hf, nhinc, nwinc, sigma_l]
 
 
 def main():
-    # dict of lists to gather defined objects
-    geo_objects = {"wires": [], "det_loops": []}
+    # build the wire
+    geo_objects = {"det_loops": []}
+    p1_wire = np.array([-l_wire / 2, 0.0, -0.5])
+    p2_wire = np.array([l_wire / 2, 0.0, -0.5])
+    sigma_w = 1.0 * 10 ** 6
 
+    wire_fil_params = {"width": 0.1, "height": 0.1, "width subs": 1, "height subs": 1, "conductivity": sigma_w}
 
+    wire_build_params = {"start_point": p1_wire, 'end_point': p2_wire, "node count": 4,
+                         'filament parameters': wire_fil_params}
 
+    wire_center = (wire_build_params["start_point"]+wire_build_params["end_point"])/2
 
+    gb.wire_builder_new(wire_build_params, geo_objects)
 
+    gb.det_loop_builder(det_pos, 0, w_l, h_l, det_loop_fil_params, geo_objects["det_loops"])  # build th detectors
 
-
-
-
+    en.eddy_02(geo_objects)  # build the objects exclusive to some experiment
 
     # 3D visualization
-
-
-    viso_point = list((p2_wire-p1_wire)/2)
-
+    viso_point = list(wire_center)
     viso_dist = 1.5
+    gp3D.ZC_viso(geo_objects, viso_point, viso_dist)
 
-    #gp3D.ZC_viso(geo_objects, viso_point, viso_dist)
+    # simulation data
+    # b_at_det = ocz.b_det_f_Z(phys_params, det_pos, w_l, h_l, det_loop_fil_params, geo_objects)
 
-    dle.plot_empit_data()
+    # dle.plot_empit_data()
 
     plt.show()
 
