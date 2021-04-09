@@ -256,7 +256,6 @@ def circular_loop_builder(build_params, geo_objects):
     nodes_pos = node_builder(gh.f_clb, build_params)
     nodes_pos_shifted = np.vstack((nodes_pos[1:n_nodes, :], nodes_pos[0, :]))
 
-    # TODO change n_loop by counting types of this loop
     n_loop = len(geo_objects["pass_loops"])
 
     node_names = np.chararray((n_nodes,), unicode=True) + "N_CL_" + str(n_loop) + "_" + list(
@@ -266,15 +265,14 @@ def circular_loop_builder(build_params, geo_objects):
 
     segment_names = np.chararray((n_nodes - 1,), unicode=True) + "E_CL_" + list(
         map(str, list(np.arange(n_nodes - 1)))) + " " + node_names[0:n_nodes - 1] + " " + node_names[1:n_nodes]
-
+    loop_normal = np.cross(nodes_pos[0, :], nodes_pos[1, :])
     seg_dir = (nodes_pos_shifted - nodes_pos)
     seg_centers = nodes_pos[:-1] + 0.5 * seg_dir[:-1]
-    seg_w_vec = seg_centers - center_pos
+    seg_w_vec = np.cross(loop_normal, seg_dir)
 
     seg_params = [seg_centers, seg_w_vec, loop_fil_params]
 
     gate_list = [[node_names[0], node_names[-1]]]
-    # TODO think if category "passive loops" or only "loops" is enough and the rest can be done by keyword "type"
     circ_loop = {"name": 'CL_' + str(n_loop), "type": "circular loop",
                  "super object": None, "nodes": nodes_pos, "node_names": list(node_names), "segments": segments,
                  "segment_names": list(segment_names), "seg_params": seg_params, "external": gate_list,
@@ -295,17 +293,15 @@ def rectangle_loop_builder(r_build_params, geo_objects):
     node_names = np.chararray((5,), unicode=True) + "N_RL_" + str(n_loop) + "_" + list(
         map(str, list(np.arange(5))))
     nodes_pos = node_builder(gh.f_rlb, r_build_params)
-
     nodes_pos_shifted = np.vstack((nodes_pos[1:n_nodes, :], nodes_pos[0, :]))
-
     segments = [nodes_pos, nodes_pos_shifted]
     segment_names = np.chararray((n_nodes - 1,), unicode=True) + "E_RL_" + list(
         map(str, list(np.arange(n_nodes - 1)))) + " " + node_names[0:n_nodes - 1] + " " + node_names[1:n_nodes]
 
+    loop_normal = np.cross(nodes_pos[0, :], nodes_pos[1, :])
     seg_dir = (nodes_pos_shifted - nodes_pos)
     seg_centers = nodes_pos[:-1] + 0.5 * seg_dir[:-1]
-    seg_w_vec = seg_centers - center_pos
-
+    seg_w_vec = np.cross(loop_normal, seg_dir)
     seg_params = [seg_centers, seg_w_vec, fil_params]
 
     gate_list = [[node_names[0], node_names[-1]]]
@@ -318,16 +314,8 @@ def rectangle_loop_builder(r_build_params, geo_objects):
     geo_objects["pass_loops"].append(rect_loop)
 
 
-def wire_builder(p1, p2, w_wire, h_wire, phys_params, fil_params, wire_list, external=False):
-    # TODO change wire def to the style of the circular loop
 
-    sigma = phys_params["sigma"]
-    nhinc, nwinc, _ = fil_params
-    name = {"Node_1": None, "Node_2": None, "Segment": None, "external": external}
-    wire_list.append([p1, p2, w_wire, h_wire, nhinc, nwinc, sigma, name])
-
-
-def wire_builder_new(build_params, geo_objects):
+def wire_builder(build_params, geo_objects):
     if not ('wires' in geo_objects):
         geo_objects['wires'] = []
 
@@ -342,16 +330,12 @@ def wire_builder_new(build_params, geo_objects):
     node_names = np.chararray((n_nodes,), unicode=True) + "N_W_" + str(n_wire) + "_" + list(
         map(str, list(np.arange(n_nodes))))
 
-    segments = [nodes_pos[0:n_nodes-1], nodes_pos_shifted]
+    segments = [nodes_pos[0:n_nodes - 1], nodes_pos_shifted]
 
     segment_names = np.chararray((n_nodes - 1,), unicode=True) + "E_W_" + list(
         map(str, list(np.arange(n_nodes - 1)))) + " " + node_names[0:n_nodes - 1] + " " + node_names[1:n_nodes]
 
-    #print(nodes_pos)
-    #print(nodes_pos[0:-1,:])
-    #print(nodes_pos_shifted)
     seg_dir = (nodes_pos_shifted - nodes_pos[0:-1, :])
-    #exit()
 
     seg_centers = nodes_pos[0:-1, :] + 0.5 * seg_dir
     seg_w_vec = seg_centers
@@ -360,9 +344,9 @@ def wire_builder_new(build_params, geo_objects):
 
     gate_list = [[node_names[0], node_names[-1]]]
     wire = {"name": 'W_' + str(n_wire), "type": "wire",
-                 "super object": None, "nodes": nodes_pos, "node_names": list(node_names), "segments": segments,
-                 "segment_names": list(segment_names), "seg_params": seg_params, "external": gate_list,
-                 "build parameters": build_params}
+            "super object": None, "nodes": nodes_pos, "node_names": list(node_names), "segments": segments,
+            "segment_names": list(segment_names), "seg_params": seg_params, "external": gate_list,
+            "build parameters": build_params}
 
     geo_objects['wires'].append(wire)
 

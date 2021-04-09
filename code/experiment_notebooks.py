@@ -50,7 +50,7 @@ def exp_00():
     h_l = 0.05
 
     # Filaments parameters of the detector loops
-    sigma_l = sigma * 0.00001  # TODO investigate how low conductivity of det loop can be & how result depends on it
+    sigma_l = sigma * 0.00001
     wf = 0.001
     hf = 0.001
     det_loop_fil_params = [wf, hf, nhinc, nwinc, sigma_l]
@@ -105,8 +105,6 @@ def exp_00():
     circ_build_params = {"center_pos": pass_pos, "yaw": 0.0 * np.pi, "pitch": 0.25 * np.pi, "roll": 0.0 * np.pi,
                          "radius": 0.125, "node count": 41, "contact distance": 10 ** (-3),
                          "filament parameters": circ_fil_params}
-    # TODO not clear why magnetic field depends so much on the distance between the contacts
-    # TODO when loop is close to detector
 
     # gb.circular_loop_builder(circ_build_params, geo_objects)
 
@@ -119,20 +117,41 @@ def exp_00():
     # op.bfbz_plot(b_at_det, beta_vec, freqs, det_pos)
 
 
-def eddy_02(geo_objects):
-    """Here define the objects created for the experiment"""
-    wire = geo_objects['wires'][0]
-    wire_center = (wire["build parameters"]['end_point'] + wire["build parameters"]['start_point']) / 2
-    plane_center = wire_center + np.array([0.0, 0.0, 0.5])
+def exp_builder(geo_objects, exp_config):
+    """Here define the objects created for the experiment
+    """
+    if exp_config['experiment #'] == 2:
+        print("Experiment: Aluminium 240x220x3")
 
-    r_fil_params = {"width": 0.05, "height": 0.002,
-                    "width subs": 1, "height subs": 1, "conductivity": 2.5 * 10 ** 6}
+        wire = geo_objects['wires'][0]
+        wire_center = (wire["build parameters"]['end_point'] + wire["build parameters"]['start_point']) / 2
+        plane_center = wire_center + np.array([0.0, 0.0, 0.5])
 
-    plane_build_params = {'center_pos': plane_center.reshape(1, 3),
-                          "yaw": 0.0 * np.pi, "pitch": 0.0 * np.pi, "roll": 0.0 * np.pi,
-                          'edge a': 2.0, 'edge b': 1.0, "loop count": 5, "contact distance": 10 ** (-3),
-                          "filament parameters": r_fil_params}
+        r_fil_params = {"width": 0.05, "height": 0.002,
+                        "width subs": 1, "height subs": 1, "conductivity": 2.5 * 10 ** 6}
 
-    gb.loop_plane_builder(plane_build_params, geo_objects)
+        plane_build_params = {'center_pos': plane_center.reshape(1, 3),
+                              "yaw": 0.0 * np.pi, "pitch": 0.0 * np.pi, "roll": 0.0 * np.pi,
+                              'edge a': 2.0, 'edge b': 1.0, "loop count": 5, "contact distance": 10 ** (-3),
+                              "filament parameters": r_fil_params}
+
+        gb.loop_plane_builder(plane_build_params, geo_objects)
+
+    if exp_config['experiment #'] == 3:
+        print("no data")
+    if exp_config['experiment #'] == 4:
+        print("no data")
+    if exp_config['experiment #'] == 5:
+        print("no data")
+    if exp_config['experiment #'] == 6:
+        print("no data")
+    if exp_config['experiment #'] == 7:
+        print("no data")
+    if exp_config['experiment #'] == 8:
+        print("no data")
+    if exp_config['experiment #'] == 9:
+        print("no data")
+    if exp_config['experiment #'] == 10:
+        print("no data")
 
     return geo_objects

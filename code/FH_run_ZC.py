@@ -42,3 +42,13 @@ def run_FH_ZC(phys_params_run, geo_objects, sub_div_auto, message=False):
         output_fh = p.communicate()
         if message:
             print(output_fh)
+
+
+    dir_files = os.listdir()
+
+
+
+    for file in dir_files:
+        if file.startswith("J"):
+            os.remove(file)
+
