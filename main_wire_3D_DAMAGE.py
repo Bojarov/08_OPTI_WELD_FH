@@ -20,7 +20,8 @@ Ri = 0.0001  # inner radius
 Ri = Ro - pipe_thickness
 flen = 20  # length of wire/pipe
 z0 = 0.0  # start of tube on z axis
-node_dens = 80  # number of nodes on radius
+node_dens = 20  # number of nodes on radius
+#node_dens = 80  # number of nodes on radius
 
 # Physical FH parameters
 

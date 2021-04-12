@@ -2,11 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import code.obs_calc_para_point as ocpp
 import code.obs_calc_j as ocj
-# from matplotlib import cm
-# from matplotlib import rc, font_manager
 import code.obs_calc_analytical as ocana
 import code.obs_calc_b_field as ocb
-import itertools
+
 
 
 
@@ -145,51 +143,51 @@ def B_wire_comp_plot(params, damage_params, filament_params, r_sub_vec,
     plt.tight_layout()
 
 
-def b_at_det_iter(phi_cv, dw_v, rdi_v, rdo_v, lw_v, xd_v, yd_v, zd_v, f_v,
-                  params, damage_params, output_params, filament_params, node_dens_vec, r_sub_vec):
-    for i in itertools.product(phi_cv, dw_v, rdi_v, rdo_v, lw_v, xd_v, yd_v, zd_v, f_v):
-        print(i)
-
-        # iterate through all the parameter combinations
-
-        x_detect = i[5]
-        y_detect = i[6]
-        z_detect = i[7]
-
-        output_params = [0, x_detect, y_detect, z_detect]
-
-        #####################################################################
-
-        ro_t, ri_t, flen, node_dens, sigma, mu_0, mu_r, freq = params
-
-        freq = i[8]
-
-        params = [ro_t, ri_t, flen, node_dens, sigma, mu_0, mu_r, freq]
-
-        #####################################################################
-        rd_i, rd_o, d_weld, l_weld, phi_c_weld, sigma_damage = damage_params
-
-        phi_c_weld = i[0]
-        d_weld = i[1]
-        rd_i = i[2]
-        rd_o = i[3]
-        l_weld = i[4]
-
-        damage_params = [rd_i, rd_o, d_weld, l_weld, phi_c_weld, sigma_damage]
-
-        if l_weld == flen:
-            l_sub_vec = np.array([0.0, flen])
-        else:
-            l_sub_vec = np.array([0.0, 0.5 * (flen - l_weld), 0.5 * (flen + l_weld), flen])
-
-        tube_lists = ocpp.para_point_calc(params, damage_params, filament_params, output_params, r_sub_vec,
-                                          l_sub_vec, node_dens_vec, [], [], mode=1)
-
-        # unpacking the lists
-        tube_node_lists, tube_segment_lists, tube_pts_lists = tube_lists
-
-        ocb.b_at_detector(params, damage_params, filament_params, output_params, r_sub_vec,
-                          node_dens_vec, l_sub_vec, tube_segment_lists, [], [])
+#def b_at_det_iter(phi_cv, dw_v, rdi_v, rdo_v, lw_v, xd_v, yd_v, zd_v, f_v,
+#                  params, damage_params, output_params, filament_params, node_dens_vec, r_sub_vec):
+#    for i in itertools.product(phi_cv, dw_v, rdi_v, rdo_v, lw_v, xd_v, yd_v, zd_v, f_v):
+#        print(i)
+#
+#        # iterate through all the parameter combinations
+#
+#        x_detect = i[5]
+#        y_detect = i[6]
+#        z_detect = i[7]
+#
+#        output_params = [0, x_detect, y_detect, z_detect]
+#
+#        #####################################################################
+#
+#        ro_t, ri_t, flen, node_dens, sigma, mu_0, mu_r, freq = params
+#
+#        freq = i[8]
+#
+#        params = [ro_t, ri_t, flen, node_dens, sigma, mu_0, mu_r, freq]
+#
+#        #####################################################################
+#        rd_i, rd_o, d_weld, l_weld, phi_c_weld, sigma_damage = damage_params
+#
+#        phi_c_weld = i[0]
+#        d_weld = i[1]
+#        rd_i = i[2]
+#        rd_o = i[3]
+#        l_weld = i[4]
+#
+#        damage_params = [rd_i, rd_o, d_weld, l_weld, phi_c_weld, sigma_damage]
+#
+#        if l_weld == flen:
+#            l_sub_vec = np.array([0.0, flen])
+#        else:
+#            l_sub_vec = np.array([0.0, 0.5 * (flen - l_weld), 0.5 * (flen + l_weld), flen])
+#
+#        tube_lists = ocpp.para_point_calc(params, damage_params, filament_params, output_params, r_sub_vec,
+#                                          l_sub_vec, node_dens_vec, [], [], mode=1)
+#
+#        # unpacking the lists
+#        tube_node_lists, tube_segment_lists, tube_pts_lists = tube_lists
+#
+#        ocb.b_at_detector(params, damage_params, filament_params, output_params, r_sub_vec,
+#                          node_dens_vec, l_sub_vec, tube_segment_lists, [], [])
 
 
 def b_at_det_plot_f(phi_cv, dw_v, rdi_v, rdo_v, lw_v, xd_v, yd_v, zd_v, f_v,

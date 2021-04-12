@@ -385,6 +385,7 @@ def loop_plane_builder(build_params, geo_objects):
     n_loops is the amount of loops the plane is made of, each loop has same filament parameters
     thick is the thickness of the segments and thus the plane thickness
     """
+    #TODO introduce thickness of the plane instead of setting it here
 
     if not ('planes' in geo_objects):
         geo_objects['planes'] = []

@@ -6,26 +6,22 @@
 .freq fmin=1.02E+03 fmax=1.02E+03 ndec=1
 
 *The nodes of the wire # 0
-N_W_0_0 x=-15.0 y=0.0 z=-0.5
-N_W_0_1 x=-5.0 y=0.0 z=-0.5
-N_W_0_2 x=5.0 y=0.0 z=-0.5
-N_W_0_3 x=15.0 y=0.0 z=-0.5
-E_W_0 N_W_0_0 N_W_0_1 w=0.1 h=0.1 sigma= 1000000.0 nhinc=1 nwinc=1
-E_W_1 N_W_0_1 N_W_0_2 w=0.1 h=0.1 sigma= 1000000.0 nhinc=1 nwinc=1
-E_W_2 N_W_0_2 N_W_0_3 w=0.1 h=0.1 sigma= 1000000.0 nhinc=1 nwinc=1
+N_W_0_0 x=0.0 y=0.0 z=0.0
+N_W_0_1 x=0.0 y=0.0 z=30.0
+E_W_0 N_W_0_0 N_W_0_1 w=0.1 h=0.1 sigma= 1000000 nhinc=1 nwinc=1
 
 *Define in and out
 
-.External N_W_0_0 N_W_0_3
+.External N_W_0_0 N_W_0_1
 
 *The segments of the cuboids
 
 *The nodes and segments of detector loops # 0 
-N_DL_0_0 x=0.025 y=0.625 z=1.0
-N_DL_0_1 x=0.025 y=0.675 z=1.0
-N_DL_0_2 x=-0.025 y=0.675 z=1.0
-N_DL_0_3 x=-0.025 y=0.625 z=1.0
-N_DL_0_4 x=0.024975 y=0.625 z=1.0
+N_DL_0_0 x=0.525 y=0.975 z=15.0
+N_DL_0_1 x=0.525 y=1.025 z=15.0
+N_DL_0_2 x=0.475 y=1.025 z=15.0
+N_DL_0_3 x=0.475 y=0.975 z=15.0
+N_DL_0_4 x=0.524975 y=0.975 z=15.0
 E_DL_0_0 N_DL_0_0 N_DL_0_1 w=0.001 h=0.001 sigma= 10.0 nhinc=1 nwinc=1
 E_DL_0_1 N_DL_0_1 N_DL_0_2 w=0.001 h=0.001 sigma= 10.0 nhinc=1 nwinc=1
 E_DL_0_2 N_DL_0_2 N_DL_0_3 w=0.001 h=0.001 sigma= 10.0 nhinc=1 nwinc=1
@@ -36,75 +32,75 @@ E_DL_0_3 N_DL_0_3 N_DL_0_4 w=0.001 h=0.001 sigma= 10.0 nhinc=1 nwinc=1
 .External N_DL_0_0 N_DL_0_4
 
 *The nodes and segments of passive loops # 0 
-N_RL_0_0 x=-0.95 y=-0.45 z=0.0
-N_RL_0_1 x=-0.95 y=0.45 z=0.0
-N_RL_0_2 x=0.95 y=0.45 z=0.0
-N_RL_0_3 x=0.95 y=-0.45 z=0.0
-N_RL_0_4 x=-0.94905 y=-0.45 z=0.0
-E_RL_0 N_RL_0_0 N_RL_0_1 w=0.1 h=0.002 sigma= 2500000.0 wx=-0.95 wy=0.0 wz=0.0 nhinc=1 nwinc=1
-E_RL_1 N_RL_0_1 N_RL_0_2 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=0.45 wz=0.0 nhinc=1 nwinc=1
-E_RL_2 N_RL_0_2 N_RL_0_3 w=0.1 h=0.002 sigma= 2500000.0 wx=0.95 wy=0.0 wz=0.0 nhinc=1 nwinc=1
-E_RL_3 N_RL_0_3 N_RL_0_4 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0004750000000000032 wy=-0.45 wz=0.0 nhinc=1 nwinc=1
+N_RL_0_0 x=-0.95 y=-0.45 z=15.0
+N_RL_0_1 x=-0.95 y=0.45 z=15.0
+N_RL_0_2 x=0.95 y=0.45 z=15.0
+N_RL_0_3 x=0.95 y=-0.45 z=15.0
+N_RL_0_4 x=-0.94905 y=-0.45 z=15.0
+E_RL_0 N_RL_0_0 N_RL_0_1 w=0.1 h=0.002 sigma= 2500000.0 wx=0.7695 wy=0.0 wz=-12.15 nhinc=1 nwinc=1
+E_RL_1 N_RL_0_1 N_RL_0_2 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=-1.6244999999999998 wz=-0.0 nhinc=1 nwinc=1
+E_RL_2 N_RL_0_2 N_RL_0_3 w=0.1 h=0.002 sigma= 2500000.0 wx=-0.7695 wy=0.0 wz=12.15 nhinc=1 nwinc=1
+E_RL_3 N_RL_0_3 N_RL_0_4 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=1.62368775 wz=0.0 nhinc=1 nwinc=1
 
 *Define in and out
 
 .External N_RL_0_0 N_RL_0_4
 
 *The nodes and segments of passive loops # 1 
-N_RL_1_0 x=-0.85 y=-0.35000000000000003 z=0.0
-N_RL_1_1 x=-0.85 y=0.35000000000000003 z=0.0
-N_RL_1_2 x=0.85 y=0.35000000000000003 z=0.0
-N_RL_1_3 x=0.85 y=-0.35000000000000003 z=0.0
-N_RL_1_4 x=-0.84915 y=-0.35000000000000003 z=0.0
-E_RL_0 N_RL_1_0 N_RL_1_1 w=0.1 h=0.002 sigma= 2500000.0 wx=-0.85 wy=0.0 wz=0.0 nhinc=1 nwinc=1
-E_RL_1 N_RL_1_1 N_RL_1_2 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=0.35000000000000003 wz=0.0 nhinc=1 nwinc=1
-E_RL_2 N_RL_1_2 N_RL_1_3 w=0.1 h=0.002 sigma= 2500000.0 wx=0.85 wy=0.0 wz=0.0 nhinc=1 nwinc=1
-E_RL_3 N_RL_1_3 N_RL_1_4 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0004250000000000087 wy=-0.35000000000000003 wz=0.0 nhinc=1 nwinc=1
+N_RL_1_0 x=-0.85 y=-0.35000000000000003 z=15.0
+N_RL_1_1 x=-0.85 y=0.35000000000000003 z=15.0
+N_RL_1_2 x=0.85 y=0.35000000000000003 z=15.0
+N_RL_1_3 x=0.85 y=-0.35000000000000003 z=15.0
+N_RL_1_4 x=-0.84915 y=-0.35000000000000003 z=15.0
+E_RL_0 N_RL_1_0 N_RL_1_1 w=0.1 h=0.002 sigma= 2500000.0 wx=0.4165000000000001 wy=0.0 wz=-7.350000000000002 nhinc=1 nwinc=1
+E_RL_1 N_RL_1_1 N_RL_1_2 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=-1.0115 wz=-0.0 nhinc=1 nwinc=1
+E_RL_2 N_RL_1_2 N_RL_1_3 w=0.1 h=0.002 sigma= 2500000.0 wx=-0.4165000000000001 wy=0.0 wz=7.350000000000002 nhinc=1 nwinc=1
+E_RL_3 N_RL_1_3 N_RL_1_4 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=1.0109942500000002 wz=0.0 nhinc=1 nwinc=1
 
 *Define in and out
 
 .External N_RL_1_0 N_RL_1_4
 
 *The nodes and segments of passive loops # 2 
-N_RL_2_0 x=-0.75 y=-0.25 z=0.0
-N_RL_2_1 x=-0.75 y=0.25 z=0.0
-N_RL_2_2 x=0.75 y=0.25 z=0.0
-N_RL_2_3 x=0.75 y=-0.25 z=0.0
-N_RL_2_4 x=-0.74925 y=-0.25 z=0.0
-E_RL_0 N_RL_2_0 N_RL_2_1 w=0.1 h=0.002 sigma= 2500000.0 wx=-0.75 wy=0.0 wz=0.0 nhinc=1 nwinc=1
-E_RL_1 N_RL_2_1 N_RL_2_2 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=0.25 wz=0.0 nhinc=1 nwinc=1
-E_RL_2 N_RL_2_2 N_RL_2_3 w=0.1 h=0.002 sigma= 2500000.0 wx=0.75 wy=0.0 wz=0.0 nhinc=1 nwinc=1
-E_RL_3 N_RL_2_3 N_RL_2_4 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0003750000000000142 wy=-0.25 wz=0.0 nhinc=1 nwinc=1
+N_RL_2_0 x=-0.75 y=-0.25 z=15.0
+N_RL_2_1 x=-0.75 y=0.25 z=15.0
+N_RL_2_2 x=0.75 y=0.25 z=15.0
+N_RL_2_3 x=0.75 y=-0.25 z=15.0
+N_RL_2_4 x=-0.74925 y=-0.25 z=15.0
+E_RL_0 N_RL_2_0 N_RL_2_1 w=0.1 h=0.002 sigma= 2500000.0 wx=0.1875 wy=0.0 wz=-3.75 nhinc=1 nwinc=1
+E_RL_1 N_RL_2_1 N_RL_2_2 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=-0.5625 wz=-0.0 nhinc=1 nwinc=1
+E_RL_2 N_RL_2_2 N_RL_2_3 w=0.1 h=0.002 sigma= 2500000.0 wx=-0.1875 wy=0.0 wz=3.75 nhinc=1 nwinc=1
+E_RL_3 N_RL_2_3 N_RL_2_4 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=0.56221875 wz=0.0 nhinc=1 nwinc=1
 
 *Define in and out
 
 .External N_RL_2_0 N_RL_2_4
 
 *The nodes and segments of passive loops # 3 
-N_RL_3_0 x=-0.6499999999999999 y=-0.14999999999999997 z=0.0
-N_RL_3_1 x=-0.6499999999999999 y=0.14999999999999997 z=0.0
-N_RL_3_2 x=0.6499999999999999 y=0.14999999999999997 z=0.0
-N_RL_3_3 x=0.6499999999999999 y=-0.14999999999999997 z=0.0
-N_RL_3_4 x=-0.6493499999999999 y=-0.14999999999999997 z=0.0
-E_RL_0 N_RL_3_0 N_RL_3_1 w=0.1 h=0.002 sigma= 2500000.0 wx=-0.6499999999999999 wy=0.0 wz=0.0 nhinc=1 nwinc=1
-E_RL_1 N_RL_3_1 N_RL_3_2 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=0.14999999999999997 wz=0.0 nhinc=1 nwinc=1
-E_RL_2 N_RL_3_2 N_RL_3_3 w=0.1 h=0.002 sigma= 2500000.0 wx=0.6499999999999999 wy=0.0 wz=0.0 nhinc=1 nwinc=1
-E_RL_3 N_RL_3_3 N_RL_3_4 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0003250000000000197 wy=-0.14999999999999997 wz=0.0 nhinc=1 nwinc=1
+N_RL_3_0 x=-0.6499999999999999 y=-0.14999999999999997 z=15.0
+N_RL_3_1 x=-0.6499999999999999 y=0.14999999999999997 z=15.0
+N_RL_3_2 x=0.6499999999999999 y=0.14999999999999997 z=15.0
+N_RL_3_3 x=0.6499999999999999 y=-0.14999999999999997 z=15.0
+N_RL_3_4 x=-0.6493499999999999 y=-0.14999999999999997 z=15.0
+E_RL_0 N_RL_3_0 N_RL_3_1 w=0.1 h=0.002 sigma= 2500000.0 wx=0.05849999999999996 wy=0.0 wz=-1.3499999999999994 nhinc=1 nwinc=1
+E_RL_1 N_RL_3_1 N_RL_3_2 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=-0.2534999999999999 wz=-0.0 nhinc=1 nwinc=1
+E_RL_2 N_RL_3_2 N_RL_3_3 w=0.1 h=0.002 sigma= 2500000.0 wx=-0.05849999999999996 wy=0.0 wz=1.3499999999999994 nhinc=1 nwinc=1
+E_RL_3 N_RL_3_3 N_RL_3_4 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=0.2533732499999999 wz=0.0 nhinc=1 nwinc=1
 
 *Define in and out
 
 .External N_RL_3_0 N_RL_3_4
 
 *The nodes and segments of passive loops # 4 
-N_RL_4_0 x=-0.5499999999999999 y=-0.049999999999999975 z=0.0
-N_RL_4_1 x=-0.5499999999999999 y=0.049999999999999975 z=0.0
-N_RL_4_2 x=0.5499999999999999 y=0.049999999999999975 z=0.0
-N_RL_4_3 x=0.5499999999999999 y=-0.049999999999999975 z=0.0
-N_RL_4_4 x=-0.5494499999999999 y=-0.049999999999999975 z=0.0
-E_RL_0 N_RL_4_0 N_RL_4_1 w=0.1 h=0.002 sigma= 2500000.0 wx=-0.5499999999999999 wy=0.0 wz=0.0 nhinc=1 nwinc=1
-E_RL_1 N_RL_4_1 N_RL_4_2 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=0.049999999999999975 wz=0.0 nhinc=1 nwinc=1
-E_RL_2 N_RL_4_2 N_RL_4_3 w=0.1 h=0.002 sigma= 2500000.0 wx=0.5499999999999999 wy=0.0 wz=0.0 nhinc=1 nwinc=1
-E_RL_3 N_RL_4_3 N_RL_4_4 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0002750000000000252 wy=-0.049999999999999975 wz=0.0 nhinc=1 nwinc=1
+N_RL_4_0 x=-0.5499999999999999 y=-0.049999999999999975 z=15.0
+N_RL_4_1 x=-0.5499999999999999 y=0.049999999999999975 z=15.0
+N_RL_4_2 x=0.5499999999999999 y=0.049999999999999975 z=15.0
+N_RL_4_3 x=0.5499999999999999 y=-0.049999999999999975 z=15.0
+N_RL_4_4 x=-0.5494499999999999 y=-0.049999999999999975 z=15.0
+E_RL_0 N_RL_4_0 N_RL_4_1 w=0.1 h=0.002 sigma= 2500000.0 wx=0.005499999999999994 wy=0.0 wz=-0.14999999999999986 nhinc=1 nwinc=1
+E_RL_1 N_RL_4_1 N_RL_4_2 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=-0.06049999999999996 wz=-0.0 nhinc=1 nwinc=1
+E_RL_2 N_RL_4_2 N_RL_4_3 w=0.1 h=0.002 sigma= 2500000.0 wx=-0.005499999999999994 wy=0.0 wz=0.14999999999999986 nhinc=1 nwinc=1
+E_RL_3 N_RL_4_3 N_RL_4_4 w=0.1 h=0.002 sigma= 2500000.0 wx=0.0 wy=0.060469749999999954 wz=0.0 nhinc=1 nwinc=1
 
 *Define in and out
 
